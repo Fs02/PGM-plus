@@ -9,12 +9,14 @@ set (HEADERS
     ${PROJECT_SOURCE_DIR}/include/pgm/variable.h
     ${PROJECT_SOURCE_DIR}/include/pgm/dataset.h
     ${PROJECT_SOURCE_DIR}/include/pgm/dgraph.h
+    ${PROJECT_SOURCE_DIR}/include/pgm/bayesnet.h
 )
 
 set (SOURCES
     ${PROJECT_SOURCE_DIR}/src/pgm/variable.cpp
     ${PROJECT_SOURCE_DIR}/src/pgm/dataset.cpp
     ${PROJECT_SOURCE_DIR}/src/pgm/dgraph.cpp
+    ${PROJECT_SOURCE_DIR}/src/pgm/bayesnet.cpp
 )
 
 include(CMakeToolsHelpers OPTIONAL)

@@ -22,17 +22,23 @@ std::size_t DGraph::add_vertex()
 
 bool DGraph::rem_vertex(std::size_t id)
 {
-    vertices_.erase(std::remove(vertices_.begin(), vertices_.end(), id), vertices_.end());
-    adjacency_list_.erase(id);
+    if (!valid_vertex(id))
+        return false;
 
     for (auto adjacents : adjacency_list_)
         rem_adjacent(adjacents.first, id);
+
+    adjacency_list_.erase(id);
+    vertices_.erase(std::remove(vertices_.begin(), vertices_.end(), id), vertices_.end());
 
     return true;
 }
 
 bool DGraph::add_adjacent(std::size_t from, std::size_t to)
 {
+    if (!valid_vertex(from) || !valid_vertex(to))
+        return false;
+
     std::vector<std::size_t> &adjacents = adjacency_list_.at(from);
 
     // max parents exceeded
@@ -54,6 +60,9 @@ bool DGraph::add_adjacent(std::size_t from, std::size_t to)
 
 bool DGraph::rem_adjacent(std::size_t from, std::size_t to)
 {
+    if (!valid_vertex(from) || !valid_vertex(to))
+        return false;
+
     std::vector<std::size_t> &adjacents = adjacency_list_.at(from);
 
     // make sure vertex is adjacent

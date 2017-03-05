@@ -68,10 +68,73 @@ void test_dgraph()
     assert(graph.adjacents(v2).size() == 1);
 }
 
+void test_bayesnet()
+{
+    // sanity test
+    // http://www.cs.ubc.ca/~murphyk/Bayes/bnintro.html
+    pgm::Bayesnet bn;
+    assert(bn.add_node("cloudy", {"F", "T"}));
+    assert(bn.add_node("sprinkler", {"F", "T"}));
+    assert(bn.add_node("rain", {"F", "T"}));
+    assert(bn.add_node("wetgrass", {"F", "T"}));
+
+    assert(bn.add_arc("cloudy", "sprinkler"));
+    assert(bn.add_arc("cloudy", "rain"));
+    assert(bn.add_arc("sprinkler", "wetgrass"));
+    assert(bn.add_arc("rain", "wetgrass"));
+
+    // assigns cpt
+    assert(bn.probability("cloudy", "F", {}, 0.5));
+    assert(bn.probability("cloudy", "T", {}, 0.5));
+
+    assert(bn.probability("sprinkler", "F", {{"cloudy", "F"}}, 0.5));
+    assert(bn.probability("sprinkler", "T", {{"cloudy", "F"}}, 0.5));
+    assert(bn.probability("sprinkler", "F", {{"cloudy", "T"}}, 0.9));
+    assert(bn.probability("sprinkler", "T", {{"cloudy", "T"}}, 0.1));
+
+    assert(bn.probability("rain", "F", {{"cloudy", "F"}}, 0.8));
+    assert(bn.probability("rain", "T", {{"cloudy", "F"}}, 0.2));
+    assert(bn.probability("rain", "F", {{"cloudy", "T"}}, 0.2));
+    assert(bn.probability("rain", "T", {{"cloudy", "T"}}, 0.8));
+
+    assert(bn.probability("wetgrass", "F", {{"sprinkler", "F"}, {"rain", "F"}}, 1.0));
+    assert(bn.probability("wetgrass", "T", {{"sprinkler", "F"}, {"rain", "F"}}, 0.0));
+    assert(bn.probability("wetgrass", "F", {{"sprinkler", "T"}, {"rain", "F"}}, 0.1));
+    assert(bn.probability("wetgrass", "T", {{"sprinkler", "T"}, {"rain", "F"}}, 0.9));
+    assert(bn.probability("wetgrass", "F", {{"sprinkler", "F"}, {"rain", "T"}}, 0.1));
+    assert(bn.probability("wetgrass", "T", {{"sprinkler", "F"}, {"rain", "T"}}, 0.9));
+    assert(bn.probability("wetgrass", "F", {{"sprinkler", "T"}, {"rain", "T"}}, 0.01));
+    assert(bn.probability("wetgrass", "T", {{"sprinkler", "T"}, {"rain", "T"}}, 0.99));
+
+    // check assigned cpt
+    assert(bn.probability("cloudy", "F", {}) == 0.5);
+    assert(bn.probability("cloudy", "T", {}) == 0.5);
+
+    assert(bn.probability("sprinkler", "F", {{"cloudy", "F"}}) == 0.5);
+    assert(bn.probability("sprinkler", "T", {{"cloudy", "F"}}) == 0.5);
+    assert(bn.probability("sprinkler", "F", {{"cloudy", "T"}}) == 0.9);
+    assert(bn.probability("sprinkler", "T", {{"cloudy", "T"}}) == 0.1);
+
+    assert(bn.probability("rain", "F", {{"cloudy", "F"}}) == 0.8);
+    assert(bn.probability("rain", "T", {{"cloudy", "F"}}) == 0.2);
+    assert(bn.probability("rain", "F", {{"cloudy", "T"}}) == 0.2);
+    assert(bn.probability("rain", "T", {{"cloudy", "T"}}) == 0.8);
+
+    assert(bn.probability("wetgrass", "F", {{"sprinkler", "F"}, {"rain", "F"}}) == 1.0);
+    assert(bn.probability("wetgrass", "T", {{"sprinkler", "F"}, {"rain", "F"}}) == 0.0);
+    assert(bn.probability("wetgrass", "F", {{"sprinkler", "T"}, {"rain", "F"}}) == 0.1);
+    assert(bn.probability("wetgrass", "T", {{"sprinkler", "T"}, {"rain", "F"}}) == 0.9);
+    assert(bn.probability("wetgrass", "F", {{"sprinkler", "F"}, {"rain", "T"}}) == 0.1);
+    assert(bn.probability("wetgrass", "T", {{"sprinkler", "F"}, {"rain", "T"}}) == 0.9);
+    assert(bn.probability("wetgrass", "F", {{"sprinkler", "T"}, {"rain", "T"}}) == 0.01);
+    assert(bn.probability("wetgrass", "T", {{"sprinkler", "T"}, {"rain", "T"}}) == 0.99);
+}
+
 int main()
 {
     test_variable();
     test_dataset();
     test_dgraph();
+    test_bayesnet();
     return 0;
 }

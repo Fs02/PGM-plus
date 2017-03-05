@@ -6,6 +6,8 @@
 
 namespace pgm {
 
+class Variable;
+
 class Dataset
 {
 public:
