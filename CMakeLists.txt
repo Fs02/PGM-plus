@@ -4,12 +4,14 @@ project(pgm)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set (SOURCES
-    ${PROJECT_SOURCE_DIR}/src/pgm/variable.cpp
-)
-
 set (HEADERS
     ${PROJECT_SOURCE_DIR}/include/pgm/variable.h
+    ${PROJECT_SOURCE_DIR}/include/pgm/dataset.h
+)
+
+set (SOURCES
+    ${PROJECT_SOURCE_DIR}/src/pgm/variable.cpp
+    ${PROJECT_SOURCE_DIR}/src/pgm/dataset.cpp
 )
 
 include(CMakeToolsHelpers OPTIONAL)

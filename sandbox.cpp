@@ -1,6 +1,6 @@
 #include <cassert>
 #include <string>
-#include <pgm/variable.h>
+#include <pgm/pgm.h>
 
 void test_variable()
 {
@@ -21,8 +21,27 @@ void test_variable()
     assert(student(1) == "no");
 }
 
+void test_dataset()
+{
+    pgm::Dataset dataset;
+    dataset.push({{"outlook", "sunny"}, {"temperature", "hot"}, {"play", "yes"}}); 
+    dataset.push({{"outlook", "rain"}, {"temperature", "cool"}, {"play", "no"}});
+    dataset.push({{"outlook", "sunny"}, {"temperature", "cool"}, {"play", "yes"}});
+    dataset.push({{"outlook", "sunny"}, {"temperature", "mild"}, {"play", "yes"}});
+    dataset.push({{"outlook", "rain"}, {"temperature", "hot"}, {"play", "no"}});
+
+    int a = dataset.size();
+    assert(dataset.size() == 5);
+    assert(dataset.names().size() == 3);
+    assert(dataset.variables().size() == 3);
+    assert(dataset.get("outlook", 0) == "sunny");
+    assert(dataset.get("play", 4) == "no");
+    assert(dataset.raw("temperature", 3) == 2);
+}
+
 int main()
 {
     test_variable();
+    test_dataset();
     return 0;
 }
