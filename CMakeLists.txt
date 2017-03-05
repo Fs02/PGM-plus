@@ -1,0 +1,26 @@
+cmake_minimum_required(VERSION 2.8)
+project(pgm)
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set (SOURCES
+    ${PROJECT_SOURCE_DIR}/src/pgm/variable.cpp
+)
+
+set (HEADERS
+    ${PROJECT_SOURCE_DIR}/include/pgm/variable.h
+)
+
+include(CMakeToolsHelpers OPTIONAL)
+
+include_directories( ${PROJECT_SOURCE_DIR} )
+include_directories( ${PROJECT_SOURCE_DIR}/include )
+
+add_library (${PROJECT_NAME} STATIC
+    ${SOURCES}
+    ${HEADERS}
+)
+
+add_executable(sandbox "sandbox.cpp")
+target_link_libraries (sandbox ${PROJECT_NAME})
