@@ -56,68 +56,62 @@ void test_frequency()
     dataset.push({{"outlook", "rain"}, {"temperature", "hot"}, {"play", "no"}});
 
     {
-        auto outlook = dataset.variable("outlook");
         pgm::Frequency count(dataset, {"outlook"});
 
         assert(count({}) == 5);
-        assert(count({{"outlook", outlook("sunny")}}) == 3);
-        assert(count({{"outlook", outlook("rain")}}) == 2);
+        assert(count({{"outlook", "sunny"}}) == 3);
+        assert(count({{"outlook", "rain"}}) == 2);
     }
 
     {
-        auto outlook = dataset.variable("outlook");
-        auto temperature = dataset.variable("temperature");
         pgm::Frequency count(dataset, {"outlook", "temperature"});
 
         assert(count({}) == 5);
-        assert(count({{"outlook", outlook("sunny")}}) == 3);
-        assert(count({{"outlook", outlook("rain")}}) == 2);
-        assert(count({{"temperature", temperature("hot")}}) == 2);
-        assert(count({{"temperature", temperature("cool")}}) == 2);
-        assert(count({{"temperature", temperature("mild")}}) == 1);
+        assert(count({{"outlook", "sunny"}}) == 3);
+        assert(count({{"outlook", "rain"}}) == 2);
+        assert(count({{"temperature", "hot"}}) == 2);
+        assert(count({{"temperature", "cool"}}) == 2);
+        assert(count({{"temperature", "mild"}}) == 1);
 
-        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("hot")}}) == 1);
-        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("cool")}}) == 1);
-        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("mild")}}) == 1);
-        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("hot")}}) == 1);
-        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("cool")}}) == 1);
-        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("mild")}}) == 0);
+        assert(count({{"outlook", "sunny"}, {"temperature", "hot"}}) == 1);
+        assert(count({{"outlook", "sunny"}, {"temperature", "cool"}}) == 1);
+        assert(count({{"outlook", "sunny"}, {"temperature", "mild"}}) == 1);
+        assert(count({{"outlook", "rain"}, {"temperature", "hot"}}) == 1);
+        assert(count({{"outlook", "rain"}, {"temperature", "cool"}}) == 1);
+        assert(count({{"outlook", "rain"}, {"temperature", "mild"}}) == 0);
     }
 
     {
-        auto outlook = dataset.variable("outlook");
-        auto temperature = dataset.variable("temperature");
-        auto play = dataset.variable("play");
         pgm::Frequency count(dataset, {"outlook", "temperature", "play"});
 
         assert(count({}) == 5);
-        assert(count({{"outlook", outlook("sunny")}}) == 3);
-        assert(count({{"outlook", outlook("rain")}}) == 2);
-        assert(count({{"temperature", temperature("hot")}}) == 2);
-        assert(count({{"temperature", temperature("cool")}}) == 2);
-        assert(count({{"temperature", temperature("mild")}}) == 1);
-        assert(count({{"play", play("yes")}}) == 3);
-        assert(count({{"play", play("no")}}) == 2);
+        assert(count({{"outlook", "sunny"}}) == 3);
+        assert(count({{"outlook", "rain"}}) == 2);
+        assert(count({{"temperature", "hot"}}) == 2);
+        assert(count({{"temperature", "cool"}}) == 2);
+        assert(count({{"temperature", "mild"}}) == 1);
+        assert(count({{"play", "yes"}}) == 3);
+        assert(count({{"play", "no"}}) == 2);
 
-        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("hot")}}) == 1);
-        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("cool")}}) == 1);
-        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("mild")}}) == 1);
-        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("hot")}}) == 1);
-        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("cool")}}) == 1);
-        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("mild")}}) == 0);
+        assert(count({{"outlook", "sunny"}, {"temperature", "hot"}}) == 1);
+        assert(count({{"outlook", "sunny"}, {"temperature", "cool"}}) == 1);
+        assert(count({{"outlook", "sunny"}, {"temperature", "mild"}}) == 1);
+        assert(count({{"outlook", "rain"}, {"temperature", "hot"}}) == 1);
+        assert(count({{"outlook", "rain"}, {"temperature", "cool"}}) == 1);
+        assert(count({{"outlook", "rain"}, {"temperature", "mild"}}) == 0);
 
-        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("hot")}, {"play", play("yes")}}) == 1);
-        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("hot")}, {"play", play("no")}}) == 0);
-        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("cool")}, {"play", play("yes")}}) == 1);
-        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("cool")}, {"play", play("no")}}) == 0);
-        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("mild")}, {"play", play("yes")}}) == 1);
-        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("mild")}, {"play", play("no")}}) == 0);
-        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("hot")}, {"play", play("yes")}}) == 0);
-        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("hot")}, {"play", play("no")}}) == 1);
-        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("cool")}, {"play", play("yes")}}) == 0);
-        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("cool")}, {"play", play("no")}}) == 1);
-        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("mild")}, {"play", play("yes")}}) == 0);
-        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("mild")}, {"play", play("no")}}) == 0);
+        assert(count({{"outlook", "sunny"}, {"temperature", "hot"}, {"play", "yes"}}) == 1);
+        assert(count({{"outlook", "sunny"}, {"temperature", "hot"}, {"play", "no"}}) == 0);
+        assert(count({{"outlook", "sunny"}, {"temperature", "cool"}, {"play", "yes"}}) == 1);
+        assert(count({{"outlook", "sunny"}, {"temperature", "cool"}, {"play", "no"}}) == 0);
+        assert(count({{"outlook", "sunny"}, {"temperature", "mild"}, {"play", "yes"}}) == 1);
+        assert(count({{"outlook", "sunny"}, {"temperature", "mild"}, {"play", "no"}}) == 0);
+        assert(count({{"outlook", "rain"}, {"temperature", "hot"}, {"play", "yes"}}) == 0);
+        assert(count({{"outlook", "rain"}, {"temperature", "hot"}, {"play", "no"}}) == 1);
+        assert(count({{"outlook", "rain"}, {"temperature", "cool"}, {"play", "yes"}}) == 0);
+        assert(count({{"outlook", "rain"}, {"temperature", "cool"}, {"play", "no"}}) == 1);
+        assert(count({{"outlook", "rain"}, {"temperature", "mild"}, {"play", "yes"}}) == 0);
+        assert(count({{"outlook", "rain"}, {"temperature", "mild"}, {"play", "no"}}) == 0);
     }
 }
 

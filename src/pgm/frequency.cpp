@@ -4,24 +4,25 @@
 
 using namespace pgm;
 
-Frequency::Frequency(const Dataset &dataset, const std::vector<std::string> variables)
+Frequency::Frequency(const Dataset &dataset, const std::vector<std::string> &variables)
 {
     // assign variables and stores each arity
+    std::vector<std::string> variables_unique;
     {
         auto variables_set = std::set<std::string>(variables.begin(), variables.end());
         std::size_t index = 0;
         for (auto it = variables_set.begin(); it != variables_set.end(); ++it)
         {
             auto var = dataset.variable(*it);
-            variables_.push_back(var.name());
-            arity_.push_back(var.arity());
+            variables_.push_back(var);
+            variables_unique.push_back(var.name());
             index_[var.name()] = index;
             ++index;
         }
     }
 
     // generate permutation
-    auto permutation = permutate(variables_);
+    auto permutation = permutate(variables_unique);
     count_.resize(permutation.size(), 0);
 
     for (std::size_t row = 0; row < dataset.size(); ++row)
@@ -31,9 +32,9 @@ Frequency::Frequency(const Dataset &dataset, const std::vector<std::string> vari
         match.assign(permutation.size(), true);
 
         // scan datasets
-        for (std::size_t i = 0; i < variables_.size(); ++i)
+        for (std::size_t i = 0; i < variables_unique.size(); ++i)
         {
-            std::size_t value = dataset.raw(variables_[i], row);
+            auto value = dataset.get(variables_unique[i], row);
             for (std::size_t j = 0; j < permutation.size(); ++j)
             {
                 if (!match[j]) continue;
@@ -51,48 +52,49 @@ Frequency::Frequency(const Dataset &dataset, const std::vector<std::string> vari
 
 }
 
-std::size_t Frequency::operator ()(const std::unordered_map<std::string, std::size_t> &vars) const
+std::size_t Frequency::operator ()(const std::unordered_map<std::string, std::string> &vars) const
 {
     std::size_t stride = 1;
     std::size_t index = 0;
     for (auto it = variables_.rbegin(); it != variables_.rend(); ++it)
     {
-        auto var_it = vars.find(*it);
+        auto var_it = vars.find(it->name());
 
         // missing? marginalize
         if (var_it == vars.end())
         {
             std::size_t sum = 0;
             auto new_vars = vars;
-            for (std::size_t i = 0; i < arity(*it); ++i)
+            for (std::size_t i = 0; i < it->arity(); ++i)
             {
-                new_vars[*it] = i;
+                new_vars[it->name()] = (*it)(i);
                 sum += operator ()(new_vars);
             }
             return sum;
         }
 
         // find the index
-        index += var_it->second * stride;
-        stride *= arity(*it);
+        index += (*it)(var_it->second) * stride;
+        stride *= it->arity();
     }
 
     return count_[index];
 }
 
-std::vector<std::vector<std::size_t>> Frequency::permutate(const std::vector<std::string> variables)
+std::vector<std::vector<std::string>> Frequency::permutate(const std::vector<std::string> &variables)
 {
-    std::vector<std::vector<std::size_t>> permutation;
-    permutation.push_back(std::vector<std::size_t>());
+    std::vector<std::vector<std::string>> permutation;
+    permutation.push_back(std::vector<std::string>());
     for (std::size_t i = 0; i < variables.size(); ++i)
     {
-        std::size_t arity_size = arity(variables[i]);
+        auto var = variable(variables[i]);
+        std::size_t arity_size = var.arity();
 
         std::size_t size = permutation.size();
         permutation.reserve(size * arity_size);
 
         // duplicates current permutation
-        std::vector<std::vector<std::size_t>> new_perm;
+        std::vector<std::vector<std::string>> new_perm;
         for (std::size_t k = 0; k < size; ++k)
         {
             for (std::size_t j = 0; j < arity_size; ++j)
@@ -107,7 +109,7 @@ std::vector<std::vector<std::size_t>> Frequency::permutate(const std::vector<std
         {
             for (std::size_t j = 0; j < arity_size; ++j)
             {
-                permutation[j + k*arity_size].push_back(j);
+                permutation[j + k*arity_size].push_back(var(j));
             }
         }
     }
