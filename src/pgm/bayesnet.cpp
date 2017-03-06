@@ -1,5 +1,6 @@
 #include <pgm/bayesnet.h>
 #include <pgm/dataset.h>
+#include <functional>
 #include <algorithm>
 
 using namespace pgm;
@@ -15,11 +16,81 @@ Bayesnet::Bayesnet(const Dataset &dataset)
         add_node(variable);
 }
 
-std::string Bayesnet::infer(const std::string &occurence, const variables_map_type &evidence)
+std::string Bayesnet::infer(const std::string &occurence, const variables_map_type &evidence) const
 {}
 
-double Bayesnet::query(const variables_map_type &evidence)
-{}
+double Bayesnet::query(const variables_map_type &evidence) const
+{
+    typedef std::unordered_map<std::size_t, const Variable>::const_iterator iterator_type;
+    std::function<double(iterator_type, const variables_map_type&)> calculate =
+        [this, &calculate](iterator_type it, const variables_map_type &evidence) {
+        double p = 1.0;
+        while (it != variables_.cend())
+        {
+            auto curr_var_name = it->second.name();
+            if (evidence.find(curr_var_name) == evidence.end())
+            {
+                double sum = 0.0;
+                auto new_evidence = evidence;
+                for (auto state : it->second.states())
+                {
+                    new_evidence[curr_var_name] = state;
+                    sum += calculate(it, new_evidence);
+                }
+                return p * sum;
+            }
+
+            for (auto adjacent : graph_.adjacents(it->first))
+            {
+                auto var = variables_.at(adjacent);
+                int a = 0;
+                if (evidence.find(var.name()) == evidence.end())
+                {
+                    double sum = 0.0;
+                    auto new_evidence = evidence;
+                    for (auto state : var.states())
+                    {
+                        new_evidence[var.name()] = state;
+                        sum += calculate(it, new_evidence);
+                    }
+                    return p * sum;
+                }
+            }
+
+            p *= probability(curr_var_name, evidence.at(curr_var_name), evidence);
+            ++it;
+        }
+
+        return p;
+    };
+
+    return calculate(variables_.cbegin(), evidence);
+}
+
+std::vector<Bayesnet::variables_map_type> Bayesnet::permutate(const variables_map_type &evidence) const
+{
+    std::vector<variables_map_type> permutation;
+    permutation.push_back(evidence);
+
+    for (auto var : variables_)
+    {
+        if (evidence.find(var.second.name()) == evidence.end())
+        {
+            std::vector<variables_map_type> new_perm;
+            for (std::size_t i = 0; i < permutation.size(); ++i)
+            {
+                for (auto state : var.second.states())
+                {
+                    permutation[i][var.second.name()] = state;
+                    new_perm.push_back(permutation[i]);
+                }
+            }
+            permutation = new_perm;
+        }
+    }
+
+    return permutation;
+}
 
 bool Bayesnet::add_node(const Variable &variable)
 {
@@ -117,7 +188,7 @@ bool Bayesnet::probability(const std::string &node, const std::string &state,
 }
 
 double Bayesnet::probability(const std::string &node, const std::string &state, 
-    const variables_map_type &parent_states)
+    const variables_map_type &parent_states) const
 {
     auto node_it = nodes_.find(node);
     if (node_it == nodes_.end())
@@ -152,7 +223,7 @@ double Bayesnet::probability(const std::string &node, const std::string &state,
     return probabilities_.at(node_id)[index];
 }
 
-std::unordered_map<std::size_t, std::size_t> Bayesnet::id_map(const variables_map_type &str_vars)
+std::unordered_map<std::size_t, std::size_t> Bayesnet::id_map(const variables_map_type &str_vars) const
 {
     std::unordered_map<std::size_t, std::size_t> vars;
     for (auto v : str_vars)

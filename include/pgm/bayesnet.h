@@ -11,13 +11,13 @@ class Dataset;
 class Bayesnet
 {
 public:
-    typedef const std::unordered_map<std::string, std::string> variables_map_type;
+    typedef std::unordered_map<std::string, std::string> variables_map_type;
 
     Bayesnet();
     Bayesnet(const Dataset &dataset);
 
-    std::string infer(const std::string &occurence, const variables_map_type &evidence);
-    double query(const variables_map_type &evidence);
+    std::string infer(const std::string &occurence, const variables_map_type &evidence) const;
+    double query(const variables_map_type &evidence) const;
 
     bool add_node(const Variable &variable);
     bool add_node(const std::string &name, const std::vector<std::string> &states);
@@ -30,13 +30,13 @@ public:
         const variables_map_type &parent_states, double p);
 
     double probability(const std::string &node, const std::string &state, 
-        const variables_map_type &parent_states);
+        const variables_map_type &parent_states) const;
 
     inline DGraph &graph() { return graph_; }
     inline const DGraph &graph() const { return graph_; }
 
 private:
-    std::unordered_map<std::size_t, std::size_t> id_map(const variables_map_type &str_vars);
+    std::unordered_map<std::size_t, std::size_t> id_map(const variables_map_type &str_vars) const;
 
     std::unordered_map<std::string, const std::size_t> nodes_;
     std::unordered_map<std::size_t, const Variable> variables_;

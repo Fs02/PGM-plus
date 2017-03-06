@@ -1,6 +1,13 @@
 #include <cassert>
 #include <string>
 #include <pgm/pgm.h>
+#include <cmath>
+
+// compare with 5 digits precision
+template<typename T>
+bool equal(T f1, T f2) { 
+  return (std::abs(f1 - f2) <= 0.000001);
+}
 
 void test_variable()
 {
@@ -71,63 +78,87 @@ void test_dgraph()
 void test_bayesnet()
 {
     // sanity test
-    // http://www.cs.ubc.ca/~murphyk/Bayes/bnintro.html
+    // taken from my course assignment
     pgm::Bayesnet bn;
-    assert(bn.add_node("cloudy", {"F", "T"}));
+    assert(bn.add_node("winter", {"F", "T"}));
     assert(bn.add_node("sprinkler", {"F", "T"}));
     assert(bn.add_node("rain", {"F", "T"}));
     assert(bn.add_node("wetgrass", {"F", "T"}));
+    assert(bn.add_node("slippery", {"F", "T"}));
 
-    assert(bn.add_arc("cloudy", "sprinkler"));
-    assert(bn.add_arc("cloudy", "rain"));
+    assert(bn.add_arc("winter", "sprinkler"));
+    assert(bn.add_arc("winter", "rain"));
     assert(bn.add_arc("sprinkler", "wetgrass"));
     assert(bn.add_arc("rain", "wetgrass"));
+    assert(bn.add_arc("rain", "slippery"));
 
     // assigns cpt
-    assert(bn.probability("cloudy", "F", {}, 0.5));
-    assert(bn.probability("cloudy", "T", {}, 0.5));
+    assert(bn.probability("winter", "T", {}, 0.6));
+    assert(bn.probability("winter", "F", {}, 0.4));
 
-    assert(bn.probability("sprinkler", "F", {{"cloudy", "F"}}, 0.5));
-    assert(bn.probability("sprinkler", "T", {{"cloudy", "F"}}, 0.5));
-    assert(bn.probability("sprinkler", "F", {{"cloudy", "T"}}, 0.9));
-    assert(bn.probability("sprinkler", "T", {{"cloudy", "T"}}, 0.1));
+    assert(bn.probability("sprinkler", "T", {{"winter", "T"}}, 0.2));
+    assert(bn.probability("sprinkler", "F", {{"winter", "T"}}, 0.8));
+    assert(bn.probability("sprinkler", "T", {{"winter", "F"}}, 0.75));
+    assert(bn.probability("sprinkler", "F", {{"winter", "F"}}, 0.25));
 
-    assert(bn.probability("rain", "F", {{"cloudy", "F"}}, 0.8));
-    assert(bn.probability("rain", "T", {{"cloudy", "F"}}, 0.2));
-    assert(bn.probability("rain", "F", {{"cloudy", "T"}}, 0.2));
-    assert(bn.probability("rain", "T", {{"cloudy", "T"}}, 0.8));
+    assert(bn.probability("rain", "T", {{"winter", "T"}}, 0.8));
+    assert(bn.probability("rain", "F", {{"winter", "T"}}, 0.2));
+    assert(bn.probability("rain", "T", {{"winter", "F"}}, 0.1));
+    assert(bn.probability("rain", "F", {{"winter", "F"}}, 0.9));
 
-    assert(bn.probability("wetgrass", "F", {{"sprinkler", "F"}, {"rain", "F"}}, 1.0));
-    assert(bn.probability("wetgrass", "T", {{"sprinkler", "F"}, {"rain", "F"}}, 0.0));
-    assert(bn.probability("wetgrass", "F", {{"sprinkler", "T"}, {"rain", "F"}}, 0.1));
+    assert(bn.probability("wetgrass", "T", {{"sprinkler", "T"}, {"rain", "T"}}, 0.95));
+    assert(bn.probability("wetgrass", "F", {{"sprinkler", "T"}, {"rain", "T"}}, 0.05));
     assert(bn.probability("wetgrass", "T", {{"sprinkler", "T"}, {"rain", "F"}}, 0.9));
-    assert(bn.probability("wetgrass", "F", {{"sprinkler", "F"}, {"rain", "T"}}, 0.1));
-    assert(bn.probability("wetgrass", "T", {{"sprinkler", "F"}, {"rain", "T"}}, 0.9));
-    assert(bn.probability("wetgrass", "F", {{"sprinkler", "T"}, {"rain", "T"}}, 0.01));
-    assert(bn.probability("wetgrass", "T", {{"sprinkler", "T"}, {"rain", "T"}}, 0.99));
+    assert(bn.probability("wetgrass", "F", {{"sprinkler", "T"}, {"rain", "F"}}, 0.1));
+    assert(bn.probability("wetgrass", "T", {{"sprinkler", "F"}, {"rain", "T"}}, 0.8));
+    assert(bn.probability("wetgrass", "F", {{"sprinkler", "F"}, {"rain", "T"}}, 0.2));
+    assert(bn.probability("wetgrass", "T", {{"sprinkler", "F"}, {"rain", "F"}}, 0.0));
+    assert(bn.probability("wetgrass", "F", {{"sprinkler", "F"}, {"rain", "F"}}, 1.0));
+
+    assert(bn.probability("slippery", "T", {{"rain", "T"}}, 0.7));
+    assert(bn.probability("slippery", "F", {{"rain", "T"}}, 0.3));
+    assert(bn.probability("slippery", "T", {{"rain", "F"}}, 0.0));
+    assert(bn.probability("slippery", "F", {{"rain", "F"}}, 1.0));
 
     // check assigned cpt
-    assert(bn.probability("cloudy", "F", {}) == 0.5);
-    assert(bn.probability("cloudy", "T", {}) == 0.5);
+    assert(bn.probability("winter", "T", {}) == 0.6);
+    assert(bn.probability("winter", "F", {}) == 0.4);
 
-    assert(bn.probability("sprinkler", "F", {{"cloudy", "F"}}) == 0.5);
-    assert(bn.probability("sprinkler", "T", {{"cloudy", "F"}}) == 0.5);
-    assert(bn.probability("sprinkler", "F", {{"cloudy", "T"}}) == 0.9);
-    assert(bn.probability("sprinkler", "T", {{"cloudy", "T"}}) == 0.1);
+    assert(bn.probability("sprinkler", "T", {{"winter", "T"}}) == 0.2);
+    assert(bn.probability("sprinkler", "F", {{"winter", "T"}}) == 0.8);
+    assert(bn.probability("sprinkler", "T", {{"winter", "F"}}) == 0.75);
+    assert(bn.probability("sprinkler", "F", {{"winter", "F"}}) == 0.25);
 
-    assert(bn.probability("rain", "F", {{"cloudy", "F"}}) == 0.8);
-    assert(bn.probability("rain", "T", {{"cloudy", "F"}}) == 0.2);
-    assert(bn.probability("rain", "F", {{"cloudy", "T"}}) == 0.2);
-    assert(bn.probability("rain", "T", {{"cloudy", "T"}}) == 0.8);
+    assert(bn.probability("rain", "T", {{"winter", "T"}}) == 0.8);
+    assert(bn.probability("rain", "F", {{"winter", "T"}}) == 0.2);
+    assert(bn.probability("rain", "T", {{"winter", "F"}}) == 0.1);
+    assert(bn.probability("rain", "F", {{"winter", "F"}}) == 0.9);
 
-    assert(bn.probability("wetgrass", "F", {{"sprinkler", "F"}, {"rain", "F"}}) == 1.0);
-    assert(bn.probability("wetgrass", "T", {{"sprinkler", "F"}, {"rain", "F"}}) == 0.0);
-    assert(bn.probability("wetgrass", "F", {{"sprinkler", "T"}, {"rain", "F"}}) == 0.1);
+    assert(bn.probability("wetgrass", "T", {{"sprinkler", "T"}, {"rain", "T"}}) == 0.95);
+    assert(bn.probability("wetgrass", "F", {{"sprinkler", "T"}, {"rain", "T"}}) == 0.05);
     assert(bn.probability("wetgrass", "T", {{"sprinkler", "T"}, {"rain", "F"}}) == 0.9);
-    assert(bn.probability("wetgrass", "F", {{"sprinkler", "F"}, {"rain", "T"}}) == 0.1);
-    assert(bn.probability("wetgrass", "T", {{"sprinkler", "F"}, {"rain", "T"}}) == 0.9);
-    assert(bn.probability("wetgrass", "F", {{"sprinkler", "T"}, {"rain", "T"}}) == 0.01);
-    assert(bn.probability("wetgrass", "T", {{"sprinkler", "T"}, {"rain", "T"}}) == 0.99);
+    assert(bn.probability("wetgrass", "F", {{"sprinkler", "T"}, {"rain", "F"}}) == 0.1);
+    assert(bn.probability("wetgrass", "T", {{"sprinkler", "F"}, {"rain", "T"}}) == 0.8);
+    assert(bn.probability("wetgrass", "F", {{"sprinkler", "F"}, {"rain", "T"}}) == 0.2);
+    assert(bn.probability("wetgrass", "T", {{"sprinkler", "F"}, {"rain", "F"}}) == 0.0);
+    assert(bn.probability("wetgrass", "F", {{"sprinkler", "F"}, {"rain", "F"}}) == 1.0);
+
+    assert(bn.probability("slippery", "T", {{"rain", "T"}}) == 0.7);
+    assert(bn.probability("slippery", "F", {{"rain", "T"}}) == 0.3);
+    assert(bn.probability("slippery", "T", {{"rain", "F"}}) == 0.0);
+    assert(bn.probability("slippery", "F", {{"rain", "F"}}) == 1.0);
+
+    // queries
+    // compared with http://aispace.org/bayes/
+    assert(equal(bn.query({{"winter", "T"}}), 0.6));
+    assert(equal(bn.query({{"sprinkler", "T"}}), 0.42));
+    assert(equal(bn.query({{"rain", "T"}}), 0.52));
+    assert(equal(bn.query({{"wetgrass", "T"}}), 0.6995));
+    assert(equal(bn.query({{"slippery", "T"}}), 0.364));
+    assert(equal(bn.query({{"winter", "T"}, {"sprinkler", "T"}, {"rain", "F"}, {"wetgrass", "T"}, {"slippery", "F"}}), 0.0216));
+    assert(equal(bn.query({{"winter", "T"}, {"sprinkler", "T"}, {"rain", "F"}}), 0.024));
+    assert(equal(bn.query({{"rain", "F"}}), 0.48));
+    assert(equal(bn.query({{"rain", "F"}, {"wetgrass", "T"}, {"slippery", "F"}}), 0.2646));
 }
 
 int main()
