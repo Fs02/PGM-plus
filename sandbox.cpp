@@ -6,7 +6,7 @@
 // compare with 5 digits precision
 template<typename T>
 bool equal(T f1, T f2) { 
-  return (std::abs(f1 - f2) <= 0.000001);
+  return (std::abs(f1 - f2) <= 0.0001);
 }
 
 void test_variable()
@@ -237,6 +237,74 @@ void test_bayesnet()
     assert(bn.infer("slippery", {}) == "F");
 }
 
+void test_sample_estimate()
+{
+    // structure
+    pgm::Bayesnet bn;
+    assert(bn.add_node("A", {"F", "T"}));
+    assert(bn.add_node("B", {"F", "T"}));
+    assert(bn.add_node("C", {"F", "T"}));
+    assert(bn.add_node("D", {"F", "T"}));
+    assert(bn.add_node("E", {"F", "T"}));
+
+    assert(bn.add_arc("A", "B"));
+    assert(bn.add_arc("A", "C"));
+    assert(bn.add_arc("B", "D"));
+    assert(bn.add_arc("C", "D"));
+    assert(bn.add_arc("C", "E"));
+
+    // dataset
+    pgm::Dataset dataset;
+    for (std::size_t i = 0; i < 20; ++i)
+        dataset.push({{"A", "T"}, {"B", "F"}, {"C", "T"}, {"D", "T"}, {"E", "T"}});
+
+    for (std::size_t i = 0; i < 15; ++i)
+        dataset.push({{"A", "T"}, {"B", "F"}, {"C", "F"}, {"D", "F"}, {"E", "F"}});
+
+    for (std::size_t i = 0; i < 10; ++i)
+        dataset.push({{"A", "F"}, {"B", "T"}, {"C", "F"}, {"D", "T"}, {"E", "T"}});
+
+    for (std::size_t i = 0; i < 15; ++i)
+        dataset.push({{"A", "F"}, {"B", "F"}, {"C", "T"}, {"D", "T"}, {"E", "T"}});
+
+    for (std::size_t i = 0; i < 5; ++i)
+        dataset.push({{"A", "F"}, {"B", "F"}, {"C", "F"}, {"D", "F"}, {"E", "F"}});
+
+    for (std::size_t i = 0; i < 2; ++i)
+        dataset.push({{"A", "T"}, {"B", "T"}, {"C", "F"}, {"D", "T"}, {"E", "F"}});
+
+    pgm::SampleEstimate estimate(0.0);
+    estimate(bn, dataset);
+
+    // check estimation
+    assert(equal(bn.probability("A", "T", {}), 0.5522));
+    assert(equal(bn.probability("A", "F", {}), 0.4478));
+
+    assert(equal(bn.probability("B", "T", {{"A", "T"}}), 0.0541));
+    assert(equal(bn.probability("B", "F", {{"A", "T"}}), 0.9459));
+    assert(equal(bn.probability("B", "T", {{"A", "F"}}), 0.3333));
+    assert(equal(bn.probability("B", "F", {{"A", "F"}}), 0.6667));
+
+    assert(equal(bn.probability("C", "T", {{"A", "T"}}), 0.5405));
+    assert(equal(bn.probability("C", "F", {{"A", "T"}}), 0.4595));
+    assert(equal(bn.probability("C", "T", {{"A", "F"}}), 0.5));
+    assert(equal(bn.probability("C", "F", {{"A", "F"}}), 0.5));
+
+    assert(std::isnan(bn.probability("D", "T", {{"B", "T"}, {"C", "T"}})));
+    assert(std::isnan(bn.probability("D", "F", {{"B", "T"}, {"C", "T"}})));
+    assert(equal(bn.probability("D", "T", {{"B", "T"}, {"C", "F"}}), 1.0));
+    assert(equal(bn.probability("D", "F", {{"B", "T"}, {"C", "F"}}), 0.0));
+    assert(equal(bn.probability("D", "T", {{"B", "F"}, {"C", "T"}}), 1.0));
+    assert(equal(bn.probability("D", "F", {{"B", "F"}, {"C", "T"}}), 0.0));
+    assert(equal(bn.probability("D", "T", {{"B", "F"}, {"C", "F"}}), 0.0));
+    assert(equal(bn.probability("D", "F", {{"B", "F"}, {"C", "F"}}), 1.0));
+
+    assert(equal(bn.probability("E", "T", {{"C", "T"}}), 1.0));
+    assert(equal(bn.probability("E", "F", {{"C", "T"}}), 0.0));
+    assert(equal(bn.probability("E", "T", {{"C", "F"}}), 0.3125));
+    assert(equal(bn.probability("E", "F", {{"C", "F"}}), 0.6875));
+}
+
 int main()
 {
     test_variable();
@@ -244,5 +312,6 @@ int main()
     test_frequency();
     test_dgraph();
     test_bayesnet();
+    test_sample_estimate();
     return 0;
 }

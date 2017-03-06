@@ -6,5 +6,6 @@
 #include <pgm/frequency.h>
 #include <pgm/dgraph.h>
 #include <pgm/bayesnet.h>
+#include <pgm/sampleestimate.h>
 
 #endif

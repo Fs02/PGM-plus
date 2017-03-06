@@ -32,6 +32,12 @@ public:
     double probability(const std::string &node, const std::string &state, 
         const variables_map_type &parent_states) const;
 
+    inline const Variable &variable(const std::string &name) const { return variables_.at(nodes_.at(name)); }
+    inline Variable variable(const std::string &name) { return variables_.at(nodes_.at(name)); }
+
+    inline const Variable &variable(std::size_t id) const { return variables_.at(id); }
+    inline Variable variable(std::size_t id) { return variables_.at(id); }
+
     inline DGraph &graph() { return graph_; }
     inline const DGraph &graph() const { return graph_; }
 
