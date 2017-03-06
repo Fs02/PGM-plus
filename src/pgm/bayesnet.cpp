@@ -17,7 +17,25 @@ Bayesnet::Bayesnet(const Dataset &dataset)
 }
 
 std::string Bayesnet::infer(const std::string &occurence, const variables_map_type &evidence) const
-{}
+{
+    auto states = variables_.at(nodes_.at(occurence)).states();
+    double max_prob = 0.0;
+    std::string state = "";
+
+    variables_map_type merged_evidence = evidence;
+    for (auto s : states)
+    {
+        merged_evidence[occurence] = s;
+        double p = query(merged_evidence);
+        if (p >= max_prob)
+        {
+            max_prob = p;
+            state = s;
+        }
+    }
+
+    return state;
+}
 
 double Bayesnet::query(const variables_map_type &evidence) const
 {
@@ -65,31 +83,6 @@ double Bayesnet::query(const variables_map_type &evidence) const
     };
 
     return calculate(variables_.cbegin(), evidence);
-}
-
-std::vector<Bayesnet::variables_map_type> Bayesnet::permutate(const variables_map_type &evidence) const
-{
-    std::vector<variables_map_type> permutation;
-    permutation.push_back(evidence);
-
-    for (auto var : variables_)
-    {
-        if (evidence.find(var.second.name()) == evidence.end())
-        {
-            std::vector<variables_map_type> new_perm;
-            for (std::size_t i = 0; i < permutation.size(); ++i)
-            {
-                for (auto state : var.second.states())
-                {
-                    permutation[i][var.second.name()] = state;
-                    new_perm.push_back(permutation[i]);
-                }
-            }
-            permutation = new_perm;
-        }
-    }
-
-    return permutation;
 }
 
 bool Bayesnet::add_node(const Variable &variable)

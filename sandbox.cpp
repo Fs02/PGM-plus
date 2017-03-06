@@ -159,6 +159,13 @@ void test_bayesnet()
     assert(equal(bn.query({{"winter", "T"}, {"sprinkler", "T"}, {"rain", "F"}}), 0.024));
     assert(equal(bn.query({{"rain", "F"}}), 0.48));
     assert(equal(bn.query({{"rain", "F"}, {"wetgrass", "T"}, {"slippery", "F"}}), 0.2646));
+
+    // infer
+    assert(bn.infer("winter", {}) == "T");
+    assert(bn.infer("sprinkler", {}) == "F");
+    assert(bn.infer("rain", {}) == "T");
+    assert(bn.infer("wetgrass", {}) == "T");
+    assert(bn.infer("slippery", {}) == "F");
 }
 
 int main()
