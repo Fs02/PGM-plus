@@ -23,6 +23,9 @@ public:
     std::vector<std::string> names() const;
     std::vector<Variable> variables() const;
 
+    inline const Variable &variable(const std::string &name) const { return variables_.at(name).first; }
+    inline Variable variable(const std::string &name) { return variables_.at(name).first; }
+
     inline std::size_t size() const { return size_; }
 
 private:

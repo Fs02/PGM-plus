@@ -46,6 +46,81 @@ void test_dataset()
     assert(dataset.raw("temperature", 3) == 2);
 }
 
+void test_frequency()
+{
+    pgm::Dataset dataset;
+    dataset.push({{"outlook", "sunny"}, {"temperature", "hot"}, {"play", "yes"}}); 
+    dataset.push({{"outlook", "rain"}, {"temperature", "cool"}, {"play", "no"}});
+    dataset.push({{"outlook", "sunny"}, {"temperature", "cool"}, {"play", "yes"}});
+    dataset.push({{"outlook", "sunny"}, {"temperature", "mild"}, {"play", "yes"}});
+    dataset.push({{"outlook", "rain"}, {"temperature", "hot"}, {"play", "no"}});
+
+    {
+        auto outlook = dataset.variable("outlook");
+        pgm::Frequency count(dataset, {"outlook"});
+
+        assert(count({}) == 5);
+        assert(count({{"outlook", outlook("sunny")}}) == 3);
+        assert(count({{"outlook", outlook("rain")}}) == 2);
+    }
+
+    {
+        auto outlook = dataset.variable("outlook");
+        auto temperature = dataset.variable("temperature");
+        pgm::Frequency count(dataset, {"outlook", "temperature"});
+
+        assert(count({}) == 5);
+        assert(count({{"outlook", outlook("sunny")}}) == 3);
+        assert(count({{"outlook", outlook("rain")}}) == 2);
+        assert(count({{"temperature", temperature("hot")}}) == 2);
+        assert(count({{"temperature", temperature("cool")}}) == 2);
+        assert(count({{"temperature", temperature("mild")}}) == 1);
+
+        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("hot")}}) == 1);
+        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("cool")}}) == 1);
+        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("mild")}}) == 1);
+        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("hot")}}) == 1);
+        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("cool")}}) == 1);
+        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("mild")}}) == 0);
+    }
+
+    {
+        auto outlook = dataset.variable("outlook");
+        auto temperature = dataset.variable("temperature");
+        auto play = dataset.variable("play");
+        pgm::Frequency count(dataset, {"outlook", "temperature", "play"});
+
+        assert(count({}) == 5);
+        assert(count({{"outlook", outlook("sunny")}}) == 3);
+        assert(count({{"outlook", outlook("rain")}}) == 2);
+        assert(count({{"temperature", temperature("hot")}}) == 2);
+        assert(count({{"temperature", temperature("cool")}}) == 2);
+        assert(count({{"temperature", temperature("mild")}}) == 1);
+        assert(count({{"play", play("yes")}}) == 3);
+        assert(count({{"play", play("no")}}) == 2);
+
+        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("hot")}}) == 1);
+        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("cool")}}) == 1);
+        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("mild")}}) == 1);
+        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("hot")}}) == 1);
+        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("cool")}}) == 1);
+        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("mild")}}) == 0);
+
+        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("hot")}, {"play", play("yes")}}) == 1);
+        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("hot")}, {"play", play("no")}}) == 0);
+        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("cool")}, {"play", play("yes")}}) == 1);
+        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("cool")}, {"play", play("no")}}) == 0);
+        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("mild")}, {"play", play("yes")}}) == 1);
+        assert(count({{"outlook", outlook("sunny")}, {"temperature", temperature("mild")}, {"play", play("no")}}) == 0);
+        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("hot")}, {"play", play("yes")}}) == 0);
+        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("hot")}, {"play", play("no")}}) == 1);
+        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("cool")}, {"play", play("yes")}}) == 0);
+        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("cool")}, {"play", play("no")}}) == 1);
+        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("mild")}, {"play", play("yes")}}) == 0);
+        assert(count({{"outlook", outlook("rain")}, {"temperature", temperature("mild")}, {"play", play("no")}}) == 0);
+    }
+}
+
 void test_dgraph()
 {
     pgm::DGraph graph(true);
@@ -172,6 +247,7 @@ int main()
 {
     test_variable();
     test_dataset();
+    test_frequency();
     test_dgraph();
     test_bayesnet();
     return 0;
