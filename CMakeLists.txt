@@ -12,6 +12,7 @@ set (HEADERS
     ${PROJECT_SOURCE_DIR}/include/pgm/dgraph.h
     ${PROJECT_SOURCE_DIR}/include/pgm/bayesnet.h
     ${PROJECT_SOURCE_DIR}/include/pgm/sampleestimate.h
+    ${PROJECT_SOURCE_DIR}/include/pgm/score/score.h
 )
 
 set (SOURCES
@@ -21,6 +22,7 @@ set (SOURCES
     ${PROJECT_SOURCE_DIR}/src/pgm/dgraph.cpp
     ${PROJECT_SOURCE_DIR}/src/pgm/bayesnet.cpp
     ${PROJECT_SOURCE_DIR}/src/pgm/sampleestimate.cpp
+    ${PROJECT_SOURCE_DIR}/src/pgm/score/score.cpp
 )
 
 include(CMakeToolsHelpers OPTIONAL)
