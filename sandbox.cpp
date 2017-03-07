@@ -305,6 +305,77 @@ void test_sample_estimate()
     assert(equal(bn.probability("E", "F", {{"C", "F"}}), 0.6875));
 }
 
+void test_bdeu()
+{
+    // structure
+    pgm::Bayesnet bn;
+    assert(bn.add_node("A", {"F", "T"}));
+    assert(bn.add_node("B", {"F", "T"}));
+    assert(bn.add_node("C", {"F", "T"}));
+    assert(bn.add_node("D", {"F", "T"}));
+    assert(bn.add_node("E", {"F", "T"}));
+
+    assert(bn.add_arc("A", "B"));
+    assert(bn.add_arc("A", "C"));
+    assert(bn.add_arc("B", "D"));
+    assert(bn.add_arc("C", "D"));
+    assert(bn.add_arc("C", "E"));
+
+    // dataset
+    pgm::Dataset dataset;
+    for (std::size_t i = 0; i < 20; ++i)
+        dataset.push({{"A", "T"}, {"B", "F"}, {"C", "T"}, {"D", "T"}, {"E", "T"}});
+
+    for (std::size_t i = 0; i < 15; ++i)
+        dataset.push({{"A", "T"}, {"B", "F"}, {"C", "F"}, {"D", "F"}, {"E", "F"}});
+
+    for (std::size_t i = 0; i < 10; ++i)
+        dataset.push({{"A", "F"}, {"B", "T"}, {"C", "F"}, {"D", "T"}, {"E", "T"}});
+
+    for (std::size_t i = 0; i < 15; ++i)
+        dataset.push({{"A", "F"}, {"B", "F"}, {"C", "T"}, {"D", "T"}, {"E", "T"}});
+
+    for (std::size_t i = 0; i < 5; ++i)
+        dataset.push({{"A", "F"}, {"B", "F"}, {"C", "F"}, {"D", "F"}, {"E", "F"}});
+
+    for (std::size_t i = 0; i < 2; ++i)
+        dataset.push({{"A", "T"}, {"B", "T"}, {"C", "F"}, {"D", "T"}, {"E", "F"}});
+
+    // equivalent sample size 0.1
+    {
+        pgm::BDeu score(dataset, 0.1);
+        double total = score(bn);
+        double a = score.score("A", {});
+        double b = score.score("B", {"A"});
+        double c = score.score("C", {"A"});
+        double d = score.score("D", {"B", "C"});
+        double e = score.score("E", {"C"});
+        assert(equal(score(bn), -168.1996));
+        assert(equal(score.score("A", {}), -50.3111));
+        assert(equal(score.score("B", {"A"}), -35.1355));
+        assert(equal(score.score("C", {"A"}), -55.4156));
+        assert(equal(score.score("D", {"B", "C"}), -2.2119));
+        assert(equal(score.score("E", {"C"}), -25.1254));
+    }
+
+    // equivalent sample size 100
+    {
+        pgm::BDeu score(dataset, 100);
+        double total = score(bn);
+        double a = score.score("A", {});
+        double b = score.score("B", {"A"});
+        double c = score.score("C", {"A"});
+        double d = score.score("D", {"B", "C"});
+        double e = score.score("E", {"C"});
+        assert(equal(score(bn), -201.3609));
+        assert(equal(score.score("A", {}), -46.5506));
+        assert(equal(score.score("B", {"A"}), -39.8258));
+        assert(equal(score.score("C", {"A"}), -46.9044));
+        assert(equal(score.score("D", {"B", "C"}), -29.5329));
+        assert(equal(score.score("E", {"C"}), -38.5469));
+    }
+}
+
 int main()
 {
     test_variable();
@@ -313,5 +384,6 @@ int main()
     test_dgraph();
     test_bayesnet();
     test_sample_estimate();
+    test_bdeu();
     return 0;
 }

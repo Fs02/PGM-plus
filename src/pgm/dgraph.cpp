@@ -41,7 +41,7 @@ bool DGraph::add_adjacent(std::size_t from, std::size_t to)
 
     std::vector<std::size_t> &adjacents = adjacency_list_.at(from);
 
-    // max parents exceeded
+    // max parent exceeded
     if (max_adjacents_ > 0 && adjacents.size() >= max_adjacents_)
         return false;
 

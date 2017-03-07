@@ -7,5 +7,6 @@
 #include <pgm/dgraph.h>
 #include <pgm/bayesnet.h>
 #include <pgm/sampleestimate.h>
+#include <pgm/score/bdeu.h>
 
 #endif

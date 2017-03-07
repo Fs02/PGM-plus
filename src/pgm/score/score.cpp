@@ -3,8 +3,8 @@
 
 using namespace pgm;
 
-Score::Score(const Dataset &dataset, std::size_t cache_size)
-    : dataset_(dataset), cache_size_(cache_size)
+Score::Score(const Dataset &dataset)
+    : dataset_(dataset), cache_size_(10)
 {}
 
 double Score::operator ()(const Bayesnet &bayesnet)

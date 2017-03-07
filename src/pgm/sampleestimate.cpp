@@ -17,22 +17,22 @@ void SampleEstimate::operator ()(Bayesnet &bayesnet, const Dataset &dataset)
 
         Variable var_child = bayesnet.variable(vertex);
         std::string child = var_child.name();
-        std::vector<std::string> parents;
+        std::vector<std::string> parent;
         for (auto adj_id : adjacents)
-            parents.push_back(bayesnet.variable(adj_id).name());
+            parent.push_back(bayesnet.variable(adj_id).name());
 
-        auto parents_child = parents;
-        parents_child.push_back(child);
+        auto parent_child = parent;
+        parent_child.push_back(child);
 
-        Frequency count(dataset, parents_child);
-        auto pa_i = count.permutate(parents);
+        Frequency count(dataset, parent_child);
+        auto pa_i = count.permutate(parent);
 
         double alpha_ijk = alpha_ / double(pa_i.size() * var_child.arity());
         for (std::size_t j = 0; j < pa_i.size(); ++j)
         {
             std::unordered_map<std::string, std::string> vars;
             for (std::size_t p = 0; p < pa_i[j].size(); ++p)
-                vars[parents[p]] = pa_i[j][p];
+                vars[parent[p]] = pa_i[j][p];
 
             double denom = pa_i.size() * alpha_ijk + count(vars);
 
