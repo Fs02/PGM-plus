@@ -26,7 +26,7 @@ std::string Bayesnet::infer(const std::string &occurence, const variables_map_ty
     for (auto s : states)
     {
         merged_evidence[occurence] = s;
-        double p = query(merged_evidence);
+        const double p = query(merged_evidence);
         if (p >= max_prob)
         {
             max_prob = p;
@@ -95,7 +95,7 @@ bool Bayesnet::add_node(const std::string &name, const std::vector<std::string> 
     if (nodes_.find(name) != nodes_.end())
         return false;
 
-    std::size_t id = graph_.add_vertex();
+    const std::size_t id = graph_.add_vertex();
     nodes_.insert({name, id});
     variables_.insert({id, Variable(name, states)});
     probabilities_[id] = std::vector<double>();
@@ -108,7 +108,7 @@ bool Bayesnet::rem_node(const std::string &name)
     if (nodes_.find(name) != nodes_.end())
         return false;
 
-    std::size_t id = nodes_[name];
+    const std::size_t id = nodes_[name];
     nodes_.erase(name);
     variables_.erase(id);
     probabilities_.erase(id);
@@ -119,8 +119,8 @@ bool Bayesnet::rem_node(const std::string &name)
 
 bool Bayesnet::add_arc(const std::string &parent, const std::string &child)
 {
-    auto p_it = nodes_.find(parent);
-    auto c_it = nodes_.find(child);
+    const auto p_it = nodes_.find(parent);
+    const auto c_it = nodes_.find(child);
 
     if (p_it == nodes_.end() || c_it == nodes_.end())
         return false;
@@ -130,8 +130,8 @@ bool Bayesnet::add_arc(const std::string &parent, const std::string &child)
 
 bool Bayesnet::rem_arc(const std::string &parent, const std::string &child)
 {
-    auto p_it = nodes_.find(parent);
-    auto c_it = nodes_.find(child);
+    const auto p_it = nodes_.find(parent);
+    const auto c_it = nodes_.find(child);
 
     if (p_it == nodes_.end() || c_it == nodes_.end())
         return false;
@@ -164,7 +164,7 @@ bool Bayesnet::probability(const std::string &node, const std::string &state,
         else
             return false;
 
-        std::size_t cardinality = variables_.at(*it).cardinality();
+        const std::size_t cardinality = variables_.at(*it).cardinality();
         if (value > cardinality)
             return false;
 
@@ -205,7 +205,7 @@ double Bayesnet::probability(const std::string &node, const std::string &state,
         else
             return 0.0;
 
-        std::size_t cardinality = variables_.at(*it).cardinality();
+        const std::size_t cardinality = variables_.at(*it).cardinality();
         if (value > cardinality)
             return 0.0;
 

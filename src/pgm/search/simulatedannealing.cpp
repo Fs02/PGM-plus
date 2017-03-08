@@ -36,8 +36,8 @@ double SimulatedAnnealing::operator() (Bayesnet &bayesnet, const score_type &sco
             {
                 // try to remove adjacent
                 is_operated = true;
-                double new_score = score(bayesnet);
-                double delta_score = new_score - current_score;
+                const double new_score = score(bayesnet);
+                const double delta_score = new_score - current_score;
 
                 if ((temp * acceptance_dist(random) + 1e-100) < delta_score)
                     current_score = new_score;
@@ -48,8 +48,8 @@ double SimulatedAnnealing::operator() (Bayesnet &bayesnet, const score_type &sco
             {
                 // try to add adjacent
                 is_operated = true;
-                double new_score = score(bayesnet);
-                double delta_score = new_score - current_score;
+                const double new_score = score(bayesnet);
+                const double delta_score = new_score - current_score;
  
                 if ((temp * acceptance_dist(random) + 1e-100) < delta_score)
                     current_score = new_score;
