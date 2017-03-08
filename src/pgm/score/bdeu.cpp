@@ -19,7 +19,7 @@ double BDeu::score(const std::string &child, const std::vector<std::string> &par
 
     double node_score = 0.0;
     std::size_t q_i = pa_i.size();
-    std::size_t r_i = var_child.arity();
+    std::size_t r_i = var_child.cardinality();
     for (std::size_t j = 0; j < q_i; ++j)
     {
         std::unordered_map<std::string, std::string> vars;

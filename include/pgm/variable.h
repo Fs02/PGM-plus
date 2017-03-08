@@ -21,7 +21,7 @@ public:
     inline std::string name() const { return name_; }
     inline const std::vector<std::string> &states() const { return states_; }
     inline std::vector<std::string> states() { return states_; }
-    inline std::size_t arity() const { return states_.size(); }
+    inline std::size_t cardinality() const { return states_.size(); }
 
 private:
     std::string name_;

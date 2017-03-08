@@ -32,6 +32,22 @@ void Dataset::set(const std::string &name, std::size_t index, const std::string 
     size_ = std::max(size_, index + 1);
 }
 
+bool Dataset::add_variable(const Variable &variable)
+{
+    return add_variable(variable.name(), variable.states());
+}
+
+bool Dataset::add_variable(const std::string &name, const std::vector<std::string> &values)
+{
+    auto var = variables_.find(name);
+    if (var == variables_.end()) {
+        variables_.insert(std::make_pair(name, std::make_pair(Variable(name, values), values_type())));
+        var = variables_.find(name);
+        return true;
+    }
+    return false;
+}
+
 void Dataset::push(const std::unordered_map<std::string, std::string> vars)
 {
     std::size_t index = size_;

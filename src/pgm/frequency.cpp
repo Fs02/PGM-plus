@@ -6,7 +6,7 @@ using namespace pgm;
 
 Frequency::Frequency(const Dataset &dataset, const std::vector<std::string> &variables)
 {
-    // assign variables and stores each arity
+    // assign variables and stores each cardinality
     std::vector<std::string> variables_unique;
     {
         auto variables_set = std::set<std::string>(variables.begin(), variables.end());
@@ -65,7 +65,7 @@ std::size_t Frequency::operator ()(const std::unordered_map<std::string, std::st
         {
             std::size_t sum = 0;
             auto new_vars = vars;
-            for (std::size_t i = 0; i < it->arity(); ++i)
+            for (std::size_t i = 0; i < it->cardinality(); ++i)
             {
                 new_vars[it->name()] = (*it)(i);
                 sum += operator ()(new_vars);
@@ -75,7 +75,7 @@ std::size_t Frequency::operator ()(const std::unordered_map<std::string, std::st
 
         // find the index
         index += (*it)(var_it->second) * stride;
-        stride *= it->arity();
+        stride *= it->cardinality();
     }
 
     return count_[index];
@@ -88,16 +88,16 @@ std::vector<std::vector<std::string>> Frequency::permutate(const std::vector<std
     for (std::size_t i = 0; i < variables.size(); ++i)
     {
         auto var = variable(variables[i]);
-        std::size_t arity_size = var.arity();
+        std::size_t cardinality = var.cardinality();
 
         std::size_t size = permutation.size();
-        permutation.reserve(size * arity_size);
+        permutation.reserve(size * cardinality);
 
         // duplicates current permutation
         std::vector<std::vector<std::string>> new_perm;
         for (std::size_t k = 0; k < size; ++k)
         {
-            for (std::size_t j = 0; j < arity_size; ++j)
+            for (std::size_t j = 0; j < cardinality; ++j)
             {
                 new_perm.push_back(permutation[k]);
             }
@@ -107,9 +107,9 @@ std::vector<std::vector<std::string>> Frequency::permutate(const std::vector<std
         // fill
         for (std::size_t k = 0; k < size; ++k)
         {
-            for (std::size_t j = 0; j < arity_size; ++j)
+            for (std::size_t j = 0; j < cardinality; ++j)
             {
-                permutation[j + k*arity_size].push_back(var(j));
+                permutation[j + k*cardinality].push_back(var(j));
             }
         }
     }

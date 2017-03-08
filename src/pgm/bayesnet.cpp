@@ -164,12 +164,12 @@ bool Bayesnet::probability(const std::string &node, const std::string &state,
         else
             return false;
 
-        std::size_t arity = variables_.at(*it).arity();
-        if (value > arity)
+        std::size_t cardinality = variables_.at(*it).cardinality();
+        if (value > cardinality)
             return false;
 
         index += value * stride;
-        stride *= arity;
+        stride *= cardinality;
     }
 
     if (index >= probabilities_.at(node_id).size())
@@ -205,12 +205,12 @@ double Bayesnet::probability(const std::string &node, const std::string &state,
         else
             return 0.0;
 
-        std::size_t arity = variables_.at(*it).arity();
-        if (value > arity)
+        std::size_t cardinality = variables_.at(*it).cardinality();
+        if (value > cardinality)
             return 0.0;
 
         index += value * stride;
-        stride *= arity;
+        stride *= cardinality;
     }
 
     return probabilities_.at(node_id)[index];

@@ -27,7 +27,7 @@ void SampleEstimate::operator ()(Bayesnet &bayesnet, const Dataset &dataset)
         Frequency count(dataset, parent_child);
         auto pa_i = count.permutate(parent);
 
-        double alpha_ijk = alpha_ / double(pa_i.size() * var_child.arity());
+        double alpha_ijk = alpha_ / double(pa_i.size() * var_child.cardinality());
         for (std::size_t j = 0; j < pa_i.size(); ++j)
         {
             std::unordered_map<std::string, std::string> vars;
@@ -36,7 +36,7 @@ void SampleEstimate::operator ()(Bayesnet &bayesnet, const Dataset &dataset)
 
             double denom = pa_i.size() * alpha_ijk + count(vars);
 
-            for (std::size_t k = 0; k < var_child.arity(); ++k)
+            for (std::size_t k = 0; k < var_child.cardinality(); ++k)
             {
                 std::string child_state = var_child(k);
                 vars[child] = child_state;
