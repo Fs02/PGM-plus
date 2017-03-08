@@ -42,3 +42,15 @@ std::string Variable::operator() (std::size_t id) const
     assert(id < states_.size());
     return states_[id];
 }
+
+std::ostream &pgm::operator <<(std::ostream &os, const Variable &v)
+{
+    os << v.name_ << " {";
+    for (std::size_t i = 0; i < v.states_.size(); ++i)
+    {
+        if (i != 0) os << ",";
+        os << v.states_[i];
+    }
+    os << "}";
+    return os;
+}

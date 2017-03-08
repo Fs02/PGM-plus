@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 
 namespace pgm {
 
@@ -23,10 +24,14 @@ public:
     inline std::vector<std::string> states() { return states_; }
     inline std::size_t cardinality() const { return states_.size(); }
 
+    friend std::ostream &operator <<(std::ostream &os, const Variable &v);
+
 private:
     std::string name_;
     std::vector<std::string> states_;
 };
+
+std::ostream &operator <<(std::ostream &os, const Variable &v);
 
 }
 

@@ -2,6 +2,7 @@
 #include <string>
 #include <pgm/pgm.h>
 #include <cmath>
+#include <iostream>
 
 // compare with 5 digits precision
 template<typename T>
@@ -382,11 +383,19 @@ void test_simulated_annealing()
 {
     // bayesnet
     pgm::Bayesnet bn;
+    #ifndef NDEBUG
     assert(bn.add_node("A", {"F", "T"}));
     assert(bn.add_node("B", {"F", "T"}));
     assert(bn.add_node("C", {"F", "T"}));
     assert(bn.add_node("D", {"F", "T"}));
     assert(bn.add_node("E", {"F", "T"}));
+    #else
+    bn.add_node("A", {"F", "T"});
+    bn.add_node("B", {"F", "T"});
+    bn.add_node("C", {"F", "T"});
+    bn.add_node("D", {"F", "T"});
+    bn.add_node("E", {"F", "T"});
+    #endif
 
     // dataset
     pgm::Dataset dataset;
@@ -411,7 +420,12 @@ void test_simulated_annealing()
     pgm::SimulatedAnnealing annealing;
     annealing.verbose(true);
     pgm::BDeu score(dataset);
+    pgm::SampleEstimate estimate;
+
     annealing(bn, score);
+    estimate(bn, dataset);
+
+    std::cout << bn;
 }
 
 int main()

@@ -3,6 +3,7 @@
 
 #include <pgm/variable.h>
 #include <pgm/dgraph.h>
+#include <iostream>
 
 namespace pgm {
 
@@ -41,6 +42,8 @@ public:
     inline DGraph &graph() { return graph_; }
     inline const DGraph &graph() const { return graph_; }
 
+    friend std::ostream &operator <<(std::ostream &os, const Bayesnet &bn);
+
 private:
     std::unordered_map<std::size_t, std::size_t> id_map(const variables_map_type &str_vars) const;
 
@@ -49,6 +52,8 @@ private:
     std::unordered_map<std::size_t, std::vector<double>> probabilities_;
     DGraph graph_;
 };
+
+std::ostream &operator <<(std::ostream &os, const Bayesnet &bn);
 
 }
 
