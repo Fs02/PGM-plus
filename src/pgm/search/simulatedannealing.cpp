@@ -18,6 +18,7 @@ double SimulatedAnnealing::operator() (Bayesnet &bayesnet, const score_type &sco
     bayesnet.graph().clear_all_adjacents();
     double current_score = score(bayesnet);    
     double best_score = current_score;
+    const double initial_score = current_score;
     Bayesnet best_bayesnet = bayesnet;
 
     double temp = initial_temp_;
@@ -64,13 +65,15 @@ double SimulatedAnnealing::operator() (Bayesnet &bayesnet, const score_type &sco
             best_score = current_score;
 
             if (verbose_)
-            {
                 std::cout << "Iter: " << iter << " Temp: " << temp << " Score: " << best_score << "\n";
-            }
         }
 
         temp *= delta_;
     }
+
+    if (verbose_)
+        std::cout << "Optimized by : " << best_score - initial_score << " points\n";
+
     bayesnet = best_bayesnet;
     return best_score;
 }

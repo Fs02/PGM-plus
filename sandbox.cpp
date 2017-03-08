@@ -346,7 +346,7 @@ void test_bdeu()
 
     // equivalent sample size 0.1
     {
-        pgm::BDeu score(dataset, 0.1);
+        pgm::Bdeu score(dataset, 0.1);
         double total = score(bn);
         double a = score.score("A", {});
         double b = score.score("B", {"A"});
@@ -363,7 +363,7 @@ void test_bdeu()
 
     // equivalent sample size 100
     {
-        pgm::BDeu score(dataset, 100);
+        pgm::Bdeu score(dataset, 100);
         double total = score(bn);
         double a = score.score("A", {});
         double b = score.score("B", {"A"});
@@ -419,7 +419,7 @@ void test_simulated_annealing()
 
     pgm::SimulatedAnnealing annealing;
     annealing.verbose(true);
-    pgm::BDeu score(dataset);
+    pgm::Fcll score(dataset, "C");
     pgm::SampleEstimate estimate;
 
     annealing(bn, score);

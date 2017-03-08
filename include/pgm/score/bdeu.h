@@ -5,10 +5,10 @@
 
 namespace pgm {
 
-class BDeu : public Score
+class Bdeu : public Score
 {
 public:
-    BDeu(const Dataset &dataset, double aplha = 0.5);
+    Bdeu(const Dataset &dataset, double aplha = 0.5);
 
     double score(const std::string &child, const std::vector<std::string> &parents);
 

@@ -8,6 +8,8 @@
 #include <pgm/bayesnet.h>
 #include <pgm/sampleestimate.h>
 #include <pgm/score/bdeu.h>
+#include <pgm/score/loglikelihood.h>
+#include <pgm/score/fcll.h>
 #include <pgm/search/simulatedannealing.h>
 
 #endif

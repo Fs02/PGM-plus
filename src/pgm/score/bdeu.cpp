@@ -4,11 +4,11 @@
 
 using namespace pgm;
 
-BDeu::BDeu(const Dataset &dataset, double aplha)
+Bdeu::Bdeu(const Dataset &dataset, double aplha)
     : Score(dataset), alpha_(aplha)
 {}
 
-double BDeu::score(const std::string &child, const std::vector<std::string> &parents)
+double Bdeu::score(const std::string &child, const std::vector<std::string> &parents)
 {
     const auto var_child = dataset_.variable(child);
     std::vector<std::string> parents_child = parents;
