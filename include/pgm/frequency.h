@@ -15,7 +15,7 @@ public:
 
     std::size_t operator ()(const std::unordered_map<std::string, std::string> &vars) const;
 
-    std::vector<std::vector<std::string>> permutate(const std::vector<std::string> &variables);
+    std::vector<std::vector<std::string>> permutate(const std::vector<std::string> &variables) const;
 
     inline const Variable &variable(const std::string &name) const { return variables_.at(index_.at(name)); }
     inline Variable variable(const std::string &name) { return variables_.at(index_.at(name)); }

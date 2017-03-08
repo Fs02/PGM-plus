@@ -81,7 +81,7 @@ std::size_t Frequency::operator ()(const std::unordered_map<std::string, std::st
     return count_[index];
 }
 
-std::vector<std::vector<std::string>> Frequency::permutate(const std::vector<std::string> &variables)
+std::vector<std::vector<std::string>> Frequency::permutate(const std::vector<std::string> &variables) const
 {
     std::vector<std::vector<std::string>> permutation;
     permutation.push_back(std::vector<std::string>());
