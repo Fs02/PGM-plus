@@ -129,6 +129,8 @@ void test_dgraph()
     assert(graph.add_adjacent(v1, v2));
     assert(graph.add_adjacent(v2, v3));
     assert(!graph.add_adjacent(v3, v1));
+    assert(!graph.add_adjacent(v2, v1));
+    assert(!graph.add_adjacent(v3, v2));
     assert(graph.adjacents(v1).size() == 1);
     assert(graph.adjacents(v2).size() == 1);
     assert(graph.adjacents(v3).size() == 0);

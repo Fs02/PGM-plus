@@ -112,43 +112,47 @@ bool DGraph::valid_vertex(std::size_t id) const
     return adjacency_list_.find(id) != adjacency_list_.end();
 }
 
-bool DGraph::valid_acyclic(std::size_t from, std::size_t to) const
-{
-    return !invalid_acyclic(from, to);
-}
-
-bool DGraph::invalid_acyclic(std::size_t from, std::size_t to) const
+bool DGraph::valid_acyclic(std::size_t from, std::size_t to)
 {
     if (from == to)
-        return true;
+        return false;
 
-    std::vector<bool> visited(vertices_.size());
-    std::vector<bool> recstack(vertices_.size());
+    std::vector<std::size_t> &adjacents = adjacency_list_.at(from);
+    adjacents.push_back(to);
 
-    std::function<bool(std::size_t, std::vector<bool>, std::vector<bool>&)> is_cyclic =
-            [this, &is_cyclic](std::size_t v, std::vector<bool> visited, std::vector<bool> &recstack)
+    // make sure there's root nodes
+    // ref: https://github.com/bnjmn/weka/blob/master/weka/src/main/java/weka/classifiers/bayes/net/search/SearchAlgorithm.java
+    std::unordered_map<std::size_t, bool> checked;
+    for (std::size_t i = 0; i < vertices_.size(); ++i)
     {
-        if (!visited[v])
+        bool found = false;
+        for (auto v : vertices_)
         {
-            // mark current node as part of recursion stack
-            visited[v] = true;
-            recstack[v] = true;
-
-            const auto adjacents = this->adjacents(v);
-            for (auto w : adjacents)
+            if (!checked[v])
             {
-                if (!visited[w] && is_cyclic(w, visited, recstack))
-                    return true;
-                else if (recstack[w])
-                    return true;
+                bool has_no_parents = true;
+                for (auto adj : adjacency_list_.at(v))
+                {
+                    if (!checked[adj])
+                        has_no_parents = false;
+                }
+
+                if (has_no_parents)
+                {
+                    checked[v] = true;
+                    found = true;
+                    break;
+                }
             }
         }
-        recstack[v] = false;
-        return false;
-    };
 
-    visited[from] = true;
-    recstack[from] = true;
+        if (!found)
+        {
+            adjacents.pop_back();
+            return false;
+        }
+    }
 
-    return is_cyclic(to, visited, recstack);
+    adjacents.pop_back();
+    return true;
 }

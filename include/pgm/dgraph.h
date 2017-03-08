@@ -41,8 +41,7 @@ public:
     bool clear_all_adjacents();
 
     bool valid_vertex(std::size_t id) const;
-    bool valid_acyclic(std::size_t from, std::size_t to) const;
-    bool invalid_acyclic(std::size_t from, std::size_t to) const;
+    bool valid_acyclic(std::size_t from, std::size_t to);
 
     /*
      * Properties
