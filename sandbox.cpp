@@ -2,6 +2,7 @@
 #include <string>
 #include <pgm/pgm.h>
 #include <cmath>
+#include <iostream>
 
 // compare with 5 digits precision
 template<typename T>
@@ -376,6 +377,42 @@ void test_bdeu()
     }
 }
 
+void test_simulated_annealing()
+{
+    // bayesnet
+    pgm::Bayesnet bn;
+    assert(bn.add_node("A", {"F", "T"}));
+    assert(bn.add_node("B", {"F", "T"}));
+    assert(bn.add_node("C", {"F", "T"}));
+    assert(bn.add_node("D", {"F", "T"}));
+    assert(bn.add_node("E", {"F", "T"}));
+
+    // dataset
+    pgm::Dataset dataset;
+    for (std::size_t i = 0; i < 20; ++i)
+        dataset.push({{"A", "T"}, {"B", "F"}, {"C", "T"}, {"D", "T"}, {"E", "T"}});
+
+    for (std::size_t i = 0; i < 15; ++i)
+        dataset.push({{"A", "T"}, {"B", "F"}, {"C", "F"}, {"D", "F"}, {"E", "F"}});
+
+    for (std::size_t i = 0; i < 10; ++i)
+        dataset.push({{"A", "F"}, {"B", "T"}, {"C", "F"}, {"D", "T"}, {"E", "T"}});
+
+    for (std::size_t i = 0; i < 15; ++i)
+        dataset.push({{"A", "F"}, {"B", "F"}, {"C", "T"}, {"D", "T"}, {"E", "T"}});
+
+    for (std::size_t i = 0; i < 5; ++i)
+        dataset.push({{"A", "F"}, {"B", "F"}, {"C", "F"}, {"D", "F"}, {"E", "F"}});
+
+    for (std::size_t i = 0; i < 2; ++i)
+        dataset.push({{"A", "T"}, {"B", "T"}, {"C", "F"}, {"D", "T"}, {"E", "F"}});
+
+    pgm::SimulatedAnnealing annealing;
+    annealing.verbose(true);
+    pgm::BDeu score(dataset);
+    std::cout << annealing(bn, score) << std::endl;
+}
+
 int main()
 {
     test_variable();
@@ -385,5 +422,6 @@ int main()
     test_bayesnet();
     test_sample_estimate();
     test_bdeu();
+    test_simulated_annealing();
     return 0;
 }

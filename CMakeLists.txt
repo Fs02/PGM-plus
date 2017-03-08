@@ -14,6 +14,7 @@ set (HEADERS
     ${PROJECT_SOURCE_DIR}/include/pgm/sampleestimate.h
     ${PROJECT_SOURCE_DIR}/include/pgm/score/score.h
     ${PROJECT_SOURCE_DIR}/include/pgm/score/bdeu.h
+    ${PROJECT_SOURCE_DIR}/include/pgm/search/simulatedannealing.h
 )
 
 set (SOURCES
@@ -25,6 +26,7 @@ set (SOURCES
     ${PROJECT_SOURCE_DIR}/src/pgm/sampleestimate.cpp
     ${PROJECT_SOURCE_DIR}/src/pgm/score/score.cpp
     ${PROJECT_SOURCE_DIR}/src/pgm/score/bdeu.cpp
+    ${PROJECT_SOURCE_DIR}/src/pgm/search/simulatedannealing.cpp
 )
 
 include(CMakeToolsHelpers OPTIONAL)
