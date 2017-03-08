@@ -2,7 +2,6 @@
 #include <string>
 #include <pgm/pgm.h>
 #include <cmath>
-#include <iostream>
 
 // compare with 5 digits precision
 template<typename T>
@@ -410,7 +409,7 @@ void test_simulated_annealing()
     pgm::SimulatedAnnealing annealing;
     annealing.verbose(true);
     pgm::BDeu score(dataset);
-    std::cout << annealing(bn, score) << std::endl;
+    annealing(bn, score);
 }
 
 int main()

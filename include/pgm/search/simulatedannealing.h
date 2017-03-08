@@ -28,6 +28,9 @@ public:
     inline double delta() const { return delta_; }
     inline void delta(double d) { delta_ = d; }
 
+    inline unsigned seed() const { return seed_; }
+    inline void seed(double s) { seed_ = s; }
+
     inline double verbose() const { return verbose_; }
     inline void verbose(bool v) { verbose_ = v; }
 
