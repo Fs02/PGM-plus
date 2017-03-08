@@ -25,12 +25,12 @@ double Score::operator ()(const Bayesnet &bayesnet)
         }
 
         std::string child = bayesnet.variable(vertex).name();
-        std::vector<std::string> parent;
+        std::vector<std::string> parents;
         for (auto adj_id : adjacents)
-            parent.push_back(bayesnet.variable(adj_id).name());
+            parents.push_back(bayesnet.variable(adj_id).name());
         
         // calculate node score
-        node_score = score(child, parent);
+        node_score = score(child, parents);
         total += node_score;
 
         // cache node score
@@ -39,11 +39,11 @@ double Score::operator ()(const Bayesnet &bayesnet)
     return total;
 }
 
-bool Score::ret_cache(std::size_t child, const std::set<std::size_t> &parent, double &score)
+bool Score::ret_cache(std::size_t child, const std::set<std::size_t> &parents, double &score)
 {
     for (auto item : cache_[child])
     {
-        if (item.first == parent)
+        if (item.first == parents)
         {
             score = item.second;
             return true;
@@ -52,10 +52,10 @@ bool Score::ret_cache(std::size_t child, const std::set<std::size_t> &parent, do
     return false;
 }
 
-void Score::put_cache(std::size_t child, const std::set<std::size_t> &parent, double score)
+void Score::put_cache(std::size_t child, const std::set<std::size_t> &parents, double score)
 {
     std::list<std::pair<std::set<std::size_t>, double>> &items = cache_[child];
-    items.push_front(std::make_pair(parent, score));
+    items.push_front(std::make_pair(parents, score));
     if (items.size() > cache_size_)
         items.pop_back();
 }

@@ -140,7 +140,7 @@ bool Bayesnet::rem_arc(const std::string &parent, const std::string &child)
 }
 
 bool Bayesnet::probability(const std::string &node, const std::string &state, 
-    const variables_map_type &parent_states, double p)
+    const variables_map_type &parents_states, double p)
 {
     auto node_it = nodes_.find(node);
     if (node_it == nodes_.end())
@@ -150,7 +150,7 @@ bool Bayesnet::probability(const std::string &node, const std::string &state,
     std::vector<std::size_t> joint = graph_.adjacents(node_id);
     joint.push_back(node_id);
 
-    auto vars = id_map(parent_states);
+    auto vars = id_map(parents_states);
     vars[node_id] = variables_.at(node_id)(state);
 
     std::size_t stride = 1;
@@ -181,7 +181,7 @@ bool Bayesnet::probability(const std::string &node, const std::string &state,
 }
 
 double Bayesnet::probability(const std::string &node, const std::string &state, 
-    const variables_map_type &parent_states) const
+    const variables_map_type &parents_states) const
 {
     auto node_it = nodes_.find(node);
     if (node_it == nodes_.end())
@@ -191,7 +191,7 @@ double Bayesnet::probability(const std::string &node, const std::string &state,
     std::vector<std::size_t> joint = graph_.adjacents(node_id);
     joint.push_back(node_id);
 
-    auto vars = id_map(parent_states);
+    auto vars = id_map(parents_states);
     vars[node_id] = variables_.at(node_id)(state);
 
     std::size_t stride = 1;

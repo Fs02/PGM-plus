@@ -8,14 +8,14 @@ BDeu::BDeu(const Dataset &dataset, double aplha)
     : Score(dataset), alpha_(aplha)
 {}
 
-double BDeu::score(const std::string &child, const std::vector<std::string> &parent)
+double BDeu::score(const std::string &child, const std::vector<std::string> &parents)
 {
     auto var_child = dataset_.variable(child);
-    std::vector<std::string> parent_child = parent;
-    parent_child.push_back(child);
+    std::vector<std::string> parents_child = parents;
+    parents_child.push_back(child);
 
-    Frequency count(dataset_, parent_child);
-    auto pa_i = count.permutate(parent);
+    Frequency count(dataset_, parents_child);
+    auto pa_i = count.permutate(parents);
 
     double node_score = 0.0;
     std::size_t q_i = pa_i.size();
@@ -24,7 +24,7 @@ double BDeu::score(const std::string &child, const std::vector<std::string> &par
     {
         std::unordered_map<std::string, std::string> vars;
         for (std::size_t p = 0; p < pa_i[j].size(); ++p)
-            vars[parent[p]] = pa_i[j][p];        
+            vars[parents[p]] = pa_i[j][p];        
 
         double n_ij = count(vars);
         node_score +=

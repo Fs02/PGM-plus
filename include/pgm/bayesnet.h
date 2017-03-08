@@ -27,10 +27,10 @@ public:
     bool rem_arc(const std::string &parent, const std::string &child);
 
     bool probability(const std::string &node, const std::string &state, 
-        const variables_map_type &parent_states, double p);
+        const variables_map_type &parents_states, double p);
 
     double probability(const std::string &node, const std::string &state, 
-        const variables_map_type &parent_states) const;
+        const variables_map_type &parents_states) const;
 
     inline const Variable &variable(const std::string &name) const { return variables_.at(nodes_.at(name)); }
     inline Variable variable(const std::string &name) { return variables_.at(nodes_.at(name)); }

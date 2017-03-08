@@ -10,7 +10,7 @@ class BDeu : public Score
 public:
     BDeu(const Dataset &dataset, double aplha = 0.5);
 
-    double score(const std::string &child, const std::vector<std::string> &parent);
+    double score(const std::string &child, const std::vector<std::string> &parents);
 
 private:
     double alpha_;
