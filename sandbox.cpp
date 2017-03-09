@@ -38,13 +38,26 @@ void test_dataset()
     dataset.push({{"outlook", "sunny"}, {"temperature", "mild"}, {"play", "yes"}});
     dataset.push({{"outlook", "rain"}, {"temperature", "hot"}, {"play", "no"}});
 
+    auto row_3 = dataset[3];
+    assert(row_3["outlook"] == "sunny");
+    assert(row_3["temperature"] == "mild");
+    assert(row_3["play"] == "yes");
+
+    std::string value = dataset("outlook", 1);
+    assert(value == "rain");
+
     int a = dataset.size();
     assert(dataset.size() == 5);
     assert(dataset.names().size() == 3);
     assert(dataset.variables().size() == 3);
-    assert(dataset.get("outlook", 0) == "sunny");
-    assert(dataset.get("play", 4) == "no");
+    assert(dataset("outlook", 0) == "sunny");
+    assert(dataset("play", 4) == "no");
+    dataset("play", 4) = "yes";
+    assert(dataset("play", 4) == "yes");
     assert(dataset.raw("temperature", 3) == 2);
+
+    assert(dataset.rem_variable("play"));
+    assert(!dataset.rem_variable("player"));
 }
 
 void test_frequency()

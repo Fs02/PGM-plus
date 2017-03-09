@@ -3,9 +3,47 @@
 
 using namespace pgm;
 
+Dataset::Proxy::Proxy(Dataset *dataset, const std::string &name, std::size_t index)
+    : dataset_(dataset), name_(name), index_(index)
+{}
+
+void Dataset::Proxy::operator = (const std::string &value)
+{
+    dataset_->set(name_, index_, value);
+}
+
+Dataset::Proxy::operator std::string() const
+{
+    return dataset_->get(name_, index_);
+}
+
+bool Dataset::Proxy::operator ==(const std::string &other)
+{
+    return dataset_->get(name_, index_) == other;
+}
+
 Dataset::Dataset()
     : variables_(), size_(0)
 {}
+
+Dataset::Proxy Dataset::operator ()(const std::string &name, std::size_t index)
+{
+    return Proxy(this, name, index);
+}
+
+std::unordered_map<std::string, std::string> Dataset::operator [](std::size_t index)
+{
+    std::unordered_map<std::string, std::string> result;
+    for (auto var: variables_)
+    {
+        auto val = var.second.second.find(index);
+        if (val != var.second.second.end())
+            result[var.first] = var.second.first(val->second);
+        else
+            result[var.first] = var.second.first(0);
+    }
+    return result;
+}
 
 std::string Dataset::get(const std::string &name, std::size_t index) const
 {
@@ -28,8 +66,27 @@ void Dataset::set(const std::string &name, std::size_t index, const std::string 
     }
 
     std::size_t id = var->second.first(value);
-    if (id != 0) var->second.second[index] = id;
+    var->second.second[index] = id;
     size_ = std::max(size_, index + 1);
+}
+
+std::size_t Dataset::raw(const std::string &name, std::size_t index) const
+{
+    auto var = variables_.find(name);
+    assert(var != variables_.end());
+
+    auto val = var->second.second.find(index);
+    if (val != var->second.second.end())
+        return val->second;
+
+    return 0;
+}
+
+void Dataset::push(const std::unordered_map<std::string, std::string> vars)
+{
+    std::size_t index = size_;
+    for (auto var : vars)
+        set(var.first, index, var.second);
 }
 
 bool Dataset::add_variable(const Variable &variable)
@@ -48,39 +105,25 @@ bool Dataset::add_variable(const std::string &name, const std::vector<std::strin
     return false;
 }
 
-void Dataset::push(const std::unordered_map<std::string, std::string> vars)
+bool Dataset::rem_variable(const std::string &name)
 {
-    std::size_t index = size_;
-    for (auto var : vars)
-        set(var.first, index, var.second);
-}
-
-std::size_t Dataset::raw(const std::string &name, std::size_t index) const
-{
-    auto var = variables_.find(name);
-    assert(var != variables_.end());
-
-    auto val = var->second.second.find(index);
-    if (val != var->second.second.end())
-        return val->second;
-
-    return 0;
+    return variables_.erase(name) != 0;
 }
 
 std::vector<std::string> Dataset::names() const
 {
-    std::vector<std::string> temp_names;
+    std::vector<std::string> result;
     for (auto var : variables_)
-        temp_names.push_back(var.first);
+        result.push_back(var.first);
 
-    return temp_names;
+    return result;
 }
 
 std::vector<Variable> Dataset::variables() const
 {
-    std::vector<Variable> temp_vars;
+    std::vector<Variable> result;
     for (auto var : variables_)
-        temp_vars.push_back(var.second.first);
+        result.push_back(var.second.first);
 
-    return temp_vars;
+    return result;
 }
