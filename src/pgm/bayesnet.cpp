@@ -39,22 +39,24 @@ std::string Bayesnet::infer(const std::string &occurence, const variables_map_ty
 
 double Bayesnet::query(const variables_map_type &evidence) const
 {
+    auto mutable_evidence = evidence;
+
     typedef std::unordered_map<std::size_t, const Variable>::const_iterator iterator_type;
-    std::function<double(iterator_type, const variables_map_type&)> calculate =
-        [this, &calculate](iterator_type it, const variables_map_type &evidence) {
+    std::function<double(iterator_type)> calculate =
+        [this, &mutable_evidence, &calculate](iterator_type it) {
         double p = 1.0;
         while (it != variables_.cend())
         {
             auto curr_var_name = it->second.name();
-            if (evidence.find(curr_var_name) == evidence.end())
+            if (mutable_evidence.find(curr_var_name) == mutable_evidence.end())
             {
                 double sum = 0.0;
-                auto new_evidence = evidence;
                 for (auto state : it->second.states())
                 {
-                    new_evidence[curr_var_name] = state;
-                    sum += calculate(it, new_evidence);
+                    mutable_evidence[curr_var_name] = state;
+                    sum += calculate(it);
                 }
+                mutable_evidence.erase(curr_var_name);
                 return p * sum;
             }
 
@@ -62,27 +64,27 @@ double Bayesnet::query(const variables_map_type &evidence) const
             {
                 auto var = variables_.at(adjacent);
                 int a = 0;
-                if (evidence.find(var.name()) == evidence.end())
+                if (mutable_evidence.find(var.name()) == mutable_evidence.end())
                 {
                     double sum = 0.0;
-                    auto new_evidence = evidence;
                     for (auto state : var.states())
                     {
-                        new_evidence[var.name()] = state;
-                        sum += calculate(it, new_evidence);
+                        mutable_evidence[var.name()] = state;
+                        sum += calculate(it);
                     }
+                    mutable_evidence.erase(var.name());
                     return p * sum;
                 }
             }
 
-            p *= probability(curr_var_name, evidence.at(curr_var_name), evidence);
+            p *= probability(curr_var_name, mutable_evidence.at(curr_var_name), mutable_evidence);
             ++it;
         }
 
         return p;
     };
 
-    return calculate(variables_.cbegin(), evidence);
+    return calculate(variables_.cbegin());
 }
 
 bool Bayesnet::add_node(const Variable &variable)
