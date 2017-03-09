@@ -15,8 +15,7 @@ double LogLikelihood::score(const std::string &child, const std::vector<std::str
 
     Frequency count(dataset_, parents_child);
     
-    // make value negative to allow the same behaviours as other scoring function
-    return -score(count, child, parents);
+    return score(count, child, parents);
 }
 
 double LogLikelihood::score(const Frequency &count, const std::string &child, const std::vector<std::string> &parents)

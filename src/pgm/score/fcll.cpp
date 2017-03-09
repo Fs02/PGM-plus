@@ -64,6 +64,5 @@ double Fcll::score(const std::string &child, const std::vector<std::string> &par
         }
     }
 
-    // make value negative to allow the same behaviours as other scoring function
-    return -((alpha + beta) * LogLikelihood::score(count, child, parents) - beta * lambda * fcllcriterion);
+    return (alpha + beta) * LogLikelihood::score(count, child, parents) - beta * lambda * fcllcriterion;
 }
