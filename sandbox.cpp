@@ -432,13 +432,23 @@ void test_simulated_annealing()
 
     pgm::SimulatedAnnealing annealing;
     annealing.verbose(true);
-    pgm::Fcll score(dataset, "C");
+    annealing.init_as_naive_bayes("A");
+    pgm::Fcll score(dataset, "A");
     pgm::SampleEstimate estimate;
 
     annealing(bn, score);
     estimate(bn, dataset);
 
     std::cout << bn;
+
+    std::size_t correct = 0;
+    for (std::size_t i = 0; i < dataset.size(); ++i)
+    {
+        auto row = dataset[i];
+        if (row["A"] == bn.infer("A", row))
+            ++correct;
+    }
+    std::cout << "Correct : " << correct << "/" << dataset.size() << "\n";
 }
 
 int main()

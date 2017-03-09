@@ -19,6 +19,9 @@ public:
 
     double operator() (Bayesnet &bayesnet, const score_type &score);
 
+    inline void init_as_naive_bayes(const std::string &class_node) { class_node_ = class_node; }
+    void init_naive_bayes(Bayesnet &bayesnet);
+
     inline std::size_t max_iter() const { return max_iter_; }
     inline void max_iter(std::size_t n) { max_iter_ = n; }
 
@@ -39,6 +42,7 @@ private:
     double initial_temp_;
     double delta_;
     unsigned seed_;
+    std::string class_node_;
     bool verbose_;
 };
 

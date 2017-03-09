@@ -16,6 +16,7 @@ double SimulatedAnnealing::operator() (Bayesnet &bayesnet, const score_type &sco
     std::uniform_real_distribution<double> acceptance_dist(0.0, 1.0);
 
     bayesnet.graph().clear_all_adjacents();
+    init_naive_bayes(bayesnet);
     double current_score = score(bayesnet);    
     double best_score = current_score;
     const double initial_score = current_score;
@@ -76,4 +77,20 @@ double SimulatedAnnealing::operator() (Bayesnet &bayesnet, const score_type &sco
 
     bayesnet = best_bayesnet;
     return best_score;
+}
+
+void SimulatedAnnealing::init_naive_bayes(Bayesnet &bayesnet)
+{
+    if (class_node_.empty())
+        return;
+
+    bool acyclic = bayesnet.graph().acyclic();
+    const auto vertices = bayesnet.graph().vertices();
+    for (auto v : vertices)
+    {
+        auto const name = bayesnet.variable(v).name();
+        if (class_node_ != name)
+           bayesnet.add_arc(class_node_, name);
+    }
+    bayesnet.graph().acyclic(acyclic);
 }
