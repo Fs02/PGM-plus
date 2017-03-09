@@ -229,6 +229,7 @@ std::unordered_map<std::size_t, std::size_t> Bayesnet::id_map(const variables_ma
 
 std::ostream &pgm::operator <<(std::ostream &os, const Bayesnet &bn)
 {
+    std::streamsize ss = std::cout.precision();
     os << "\nBayesian Network Model\n";
     os << "==> Structure\n";
     for (auto v : bn.graph().vertices())
@@ -242,6 +243,7 @@ std::ostream &pgm::operator <<(std::ostream &os, const Bayesnet &bn)
         os << "\n";
     }
     os << "==> Probability Distribution\n";
+    std::cout.precision(2);
     for (auto v : bn.graph().vertices())
     {
         os << bn.variable(v) << " :";
@@ -251,6 +253,7 @@ std::ostream &pgm::operator <<(std::ostream &os, const Bayesnet &bn)
         }
         os << "\n";
     }
+    std::cout.precision (ss);
 
     return os;
 }
