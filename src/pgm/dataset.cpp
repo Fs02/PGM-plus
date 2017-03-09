@@ -34,6 +34,7 @@ Dataset::Proxy Dataset::operator ()(const std::string &name, std::size_t index)
 std::unordered_map<std::string, std::string> Dataset::operator [](std::size_t index)
 {
     std::unordered_map<std::string, std::string> result;
+    result.reserve(variables_.size());
     for (auto var: variables_)
     {
         auto val = var.second.second.find(index);

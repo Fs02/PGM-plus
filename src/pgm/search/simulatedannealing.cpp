@@ -22,6 +22,9 @@ double SimulatedAnnealing::operator() (Bayesnet &bayesnet, const score_type &sco
     const double initial_score = current_score;
     Bayesnet best_bayesnet = bayesnet;
 
+    if (verbose_)
+        std::cout << "Initial score: " << current_score << "\n";
+
     double temp = initial_temp_;
     for (std::size_t iter = 0; iter < max_iter_; ++iter)
     {
@@ -85,6 +88,8 @@ void SimulatedAnnealing::init_naive_bayes(Bayesnet &bayesnet)
         return;
 
     bool acyclic = bayesnet.graph().acyclic();
+    bayesnet.graph().acyclic(false);
+
     const auto vertices = bayesnet.graph().vertices();
     for (auto v : vertices)
     {
