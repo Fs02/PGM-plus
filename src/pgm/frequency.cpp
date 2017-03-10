@@ -89,12 +89,11 @@ std::vector<std::vector<std::string>> Frequency::permutate(const std::vector<std
     {
         const auto var = variable(variables[i]);
         const std::size_t cardinality = var.cardinality();
-
         const std::size_t size = permutation.size();
-        permutation.reserve(size * cardinality);
 
         // duplicates current permutation
         std::vector<std::vector<std::string>> new_perm;
+        new_perm.reserve(size * cardinality);
         for (std::size_t k = 0; k < size; ++k)
         {
             for (std::size_t j = 0; j < cardinality; ++j)
@@ -102,7 +101,7 @@ std::vector<std::vector<std::string>> Frequency::permutate(const std::vector<std
                 new_perm.push_back(permutation[k]);
             }
         }
-        permutation = new_perm;
+        permutation = std::move(new_perm);
 
         // fill
         for (std::size_t k = 0; k < size; ++k)
