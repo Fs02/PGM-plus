@@ -24,7 +24,7 @@ bool pgm::write_dot(const Bayesnet &bayesnet, const std::string &path)
             out << adjacents[i];
             if (i < adjacents.size() - 1) out << " ; ";
         }
-        out << "}\n";
+        out << "} [dir=back]\n";
     }
 
     out << "}";
