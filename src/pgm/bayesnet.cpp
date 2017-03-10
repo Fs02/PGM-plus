@@ -2,6 +2,7 @@
 #include <pgm/dataset.h>
 #include <functional>
 #include <algorithm>
+#include <cassert>
 
 using namespace pgm;
 
@@ -177,8 +178,13 @@ double Bayesnet::query(const raw_variables_map_type &evidence) const
         double p = 1.0;
         while (it != variables_.cend())
         {
-            auto curr_var_id = it->first;
-            if (mutable_evidence.find(curr_var_id) == mutable_evidence.end())
+            std::size_t stride = 1;
+            std::size_t index = 0;
+            const auto curr_var_id = it->first;
+            const auto adjacents = graph_.adjacents(curr_var_id);
+
+            auto curr_evi = mutable_evidence.find(curr_var_id);
+            if (curr_evi == mutable_evidence.end())
             {
                 double sum = 0.0;
                 for (std::size_t i = 0; i < it->second.cardinality(); ++i)
@@ -189,24 +195,37 @@ double Bayesnet::query(const raw_variables_map_type &evidence) const
                 mutable_evidence.erase(curr_var_id);
                 return p * sum;
             }
-
-            for (auto adjacent : graph_.adjacents(curr_var_id))
+            else
             {
-                if (mutable_evidence.find(adjacent) == mutable_evidence.end())
+                index += curr_evi->second * stride;
+                stride *= it->second.cardinality();
+            }
+
+            for (auto adj_it = adjacents.crbegin(); adj_it != adjacents.crend(); ++adj_it)
+            {
+                const auto var = variables_.at(*adj_it);
+                auto evi = mutable_evidence.find(*adj_it);
+                if (evi == mutable_evidence.end())
                 {
-                    auto var = variables_.at(adjacent);
                     double sum = 0.0;
                     for (std::size_t i = 0; i < var.cardinality(); ++i)
                     {
-                        mutable_evidence[adjacent] = i;
+                        mutable_evidence[*adj_it] = i;
                         sum += calculate(it);
                     }
-                    mutable_evidence.erase(adjacent);
+                    mutable_evidence.erase(*adj_it);
                     return p * sum;
+                }
+                else
+                {
+                    index += evi->second * stride;
+                    stride *= var.cardinality();
                 }
             }
 
-            p *= probability(curr_var_id, mutable_evidence.at(curr_var_id), mutable_evidence);
+            assert(probabilities_.at(curr_var_id)[index] == 
+                probability(curr_var_id, mutable_evidence.at(curr_var_id), mutable_evidence));
+            p *= probabilities_.at(curr_var_id)[index];
             ++it;
         }
 
@@ -237,7 +256,7 @@ double Bayesnet::probability(std::size_t node, std::size_t state,
             if (var != parents_states.end())
                 value = var->second;
             else
-            return 0.0;
+                return 0.0;
         }
 
         const std::size_t cardinality = variables_.at(*it).cardinality();
