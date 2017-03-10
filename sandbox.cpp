@@ -449,6 +449,8 @@ void test_simulated_annealing()
             ++correct;
     }
     std::cout << "Correct : " << correct << "/" << dataset.size() << "\n";
+    
+    pgm::write_dot(bn, "test_bn.dot");
 }
 
 int main()

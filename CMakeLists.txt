@@ -17,6 +17,7 @@ set (HEADERS
     ${PROJECT_SOURCE_DIR}/include/pgm/score/loglikelihood.h
     ${PROJECT_SOURCE_DIR}/include/pgm/score/fcll.h
     ${PROJECT_SOURCE_DIR}/include/pgm/search/simulatedannealing.h
+    ${PROJECT_SOURCE_DIR}/include/pgm/utility.h
 )
 
 set (SOURCES
@@ -31,6 +32,7 @@ set (SOURCES
     ${PROJECT_SOURCE_DIR}/src/pgm/score/loglikelihood.cpp
     ${PROJECT_SOURCE_DIR}/src/pgm/score/fcll.cpp
     ${PROJECT_SOURCE_DIR}/src/pgm/search/simulatedannealing.cpp
+    ${PROJECT_SOURCE_DIR}/src/pgm/utility.cpp
 )
 
 include(CMakeToolsHelpers OPTIONAL)
