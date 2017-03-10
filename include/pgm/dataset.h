@@ -34,7 +34,7 @@ public:
 
     std::size_t raw(const std::string &name, std::size_t index) const;
 
-    void push(const std::unordered_map<std::string, std::string> vars);
+    void push(const std::unordered_map<std::string, std::string> &vars);
 
     bool add_variable(const Variable &variable);
     bool add_variable(const std::string &name, const std::vector<std::string> &values);

@@ -123,6 +123,7 @@ bool DGraph::valid_acyclic(std::size_t from, std::size_t to)
     // make sure there's root nodes
     // ref: https://github.com/bnjmn/weka/blob/master/weka/src/main/java/weka/classifiers/bayes/net/search/SearchAlgorithm.java
     std::unordered_map<std::size_t, bool> checked;
+    checked.reserve(vertices_.size());
     for (std::size_t i = 0; i < vertices_.size(); ++i)
     {
         bool found = false;

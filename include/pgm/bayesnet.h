@@ -45,7 +45,13 @@ public:
     friend std::ostream &operator <<(std::ostream &os, const Bayesnet &bn);
 
 private:
-    std::unordered_map<std::size_t, std::size_t> id_map(const variables_map_type &str_vars) const;
+    typedef std::unordered_map<std::size_t, std::size_t> raw_variables_map_type;
+
+    raw_variables_map_type id_map(const variables_map_type &str_vars) const;
+
+    double query(const raw_variables_map_type &evidence) const;
+    double probability(std::size_t node, std::size_t state, 
+        const raw_variables_map_type &parents_states) const;
 
     std::unordered_map<std::string, const std::size_t> nodes_;
     std::unordered_map<std::size_t, const Variable> variables_;

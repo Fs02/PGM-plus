@@ -83,7 +83,7 @@ std::size_t Dataset::raw(const std::string &name, std::size_t index) const
     return 0;
 }
 
-void Dataset::push(const std::unordered_map<std::string, std::string> vars)
+void Dataset::push(const std::unordered_map<std::string, std::string> &vars)
 {
     std::size_t index = size_;
     for (auto var : vars)
