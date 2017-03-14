@@ -10,6 +10,7 @@
 #include <pgm/score/bdeu.h>
 #include <pgm/score/loglikelihood.h>
 #include <pgm/score/fcll.h>
+#include <pgm/search/greedyhillclimbing.h>
 #include <pgm/search/simulatedannealing.h>
 #include <pgm/utility.h>
 
