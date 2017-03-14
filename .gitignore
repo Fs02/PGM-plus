@@ -10,3 +10,5 @@ compile_commands.json
 CTestTestfile.cmake
 build/
 .vscode/
+doc/html/
+doc/latex/
