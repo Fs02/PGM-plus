@@ -15,6 +15,8 @@ set (HEADERS
     ${PROJECT_SOURCE_DIR}/include/pgm/score/score.h
     ${PROJECT_SOURCE_DIR}/include/pgm/score/bdeu.h
     ${PROJECT_SOURCE_DIR}/include/pgm/score/loglikelihood.h
+    ${PROJECT_SOURCE_DIR}/include/pgm/score/aic.h
+    ${PROJECT_SOURCE_DIR}/include/pgm/score/bic.h
     ${PROJECT_SOURCE_DIR}/include/pgm/score/fcll.h
     ${PROJECT_SOURCE_DIR}/include/pgm/search/greedyhillclimbing.h
     ${PROJECT_SOURCE_DIR}/include/pgm/search/simulatedannealing.h
@@ -31,6 +33,8 @@ set (SOURCES
     ${PROJECT_SOURCE_DIR}/src/pgm/score/score.cpp
     ${PROJECT_SOURCE_DIR}/src/pgm/score/bdeu.cpp
     ${PROJECT_SOURCE_DIR}/src/pgm/score/loglikelihood.cpp
+    ${PROJECT_SOURCE_DIR}/src/pgm/score/aic.cpp
+    ${PROJECT_SOURCE_DIR}/src/pgm/score/bic.cpp
     ${PROJECT_SOURCE_DIR}/src/pgm/score/fcll.cpp
     ${PROJECT_SOURCE_DIR}/src/pgm/search/greedyhillclimbing.cpp
     ${PROJECT_SOURCE_DIR}/src/pgm/search/simulatedannealing.cpp

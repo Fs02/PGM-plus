@@ -361,11 +361,6 @@ void test_bdeu()
     {
         pgm::Bdeu score(dataset, 0.1);
         double total = score(bn);
-        double a = score.score("A", {});
-        double b = score.score("B", {"A"});
-        double c = score.score("C", {"A"});
-        double d = score.score("D", {"B", "C"});
-        double e = score.score("E", {"C"});
         assert(equal(score(bn), -168.1996));
         assert(equal(score.score("A", {}), -50.3111));
         assert(equal(score.score("B", {"A"}), -35.1355));
@@ -389,6 +384,100 @@ void test_bdeu()
         assert(equal(score.score("C", {"A"}), -46.9044));
         assert(equal(score.score("D", {"B", "C"}), -29.5329));
         assert(equal(score.score("E", {"C"}), -38.5469));
+    }
+}
+
+void test_aic()
+{
+    // structure
+    pgm::Bayesnet bn;
+    assert(bn.add_node("A", {"F", "T"}));
+    assert(bn.add_node("B", {"F", "T"}));
+    assert(bn.add_node("C", {"F", "T"}));
+    assert(bn.add_node("D", {"F", "T"}));
+    assert(bn.add_node("E", {"F", "T"}));
+
+    assert(bn.add_arc("A", "B"));
+    assert(bn.add_arc("A", "C"));
+    assert(bn.add_arc("B", "D"));
+    assert(bn.add_arc("C", "D"));
+    assert(bn.add_arc("C", "E"));
+
+    // dataset
+    pgm::Dataset dataset;
+    for (std::size_t i = 0; i < 20; ++i)
+        dataset.push({{"A", "T"}, {"B", "F"}, {"C", "T"}, {"D", "T"}, {"E", "T"}});
+
+    for (std::size_t i = 0; i < 15; ++i)
+        dataset.push({{"A", "T"}, {"B", "F"}, {"C", "F"}, {"D", "F"}, {"E", "F"}});
+
+    for (std::size_t i = 0; i < 10; ++i)
+        dataset.push({{"A", "F"}, {"B", "T"}, {"C", "F"}, {"D", "T"}, {"E", "T"}});
+
+    for (std::size_t i = 0; i < 15; ++i)
+        dataset.push({{"A", "F"}, {"B", "F"}, {"C", "T"}, {"D", "T"}, {"E", "T"}});
+
+    for (std::size_t i = 0; i < 5; ++i)
+        dataset.push({{"A", "F"}, {"B", "F"}, {"C", "F"}, {"D", "F"}, {"E", "F"}});
+
+    for (std::size_t i = 0; i < 2; ++i)
+        dataset.push({{"A", "T"}, {"B", "T"}, {"C", "F"}, {"D", "T"}, {"E", "F"}});
+
+    {
+        pgm::Aic score(dataset);
+        assert(equal(score(bn), -150.1443));
+        assert(equal(score.score("A", {}), -47.0745));
+        assert(equal(score.score("B", {"A"}), -28.8759));
+        assert(equal(score.score("C", {"A"}), -48.3191));
+        assert(equal(score.score("D", {"B", "C"}), -4.0));
+        assert(equal(score.score("E", {"C"}), -21.8748));
+    }
+}
+
+void test_bic()
+{
+    // structure
+    pgm::Bayesnet bn;
+    assert(bn.add_node("A", {"F", "T"}));
+    assert(bn.add_node("B", {"F", "T"}));
+    assert(bn.add_node("C", {"F", "T"}));
+    assert(bn.add_node("D", {"F", "T"}));
+    assert(bn.add_node("E", {"F", "T"}));
+
+    assert(bn.add_arc("A", "B"));
+    assert(bn.add_arc("A", "C"));
+    assert(bn.add_arc("B", "D"));
+    assert(bn.add_arc("C", "D"));
+    assert(bn.add_arc("C", "E"));
+
+    // dataset
+    pgm::Dataset dataset;
+    for (std::size_t i = 0; i < 20; ++i)
+        dataset.push({{"A", "T"}, {"B", "F"}, {"C", "T"}, {"D", "T"}, {"E", "T"}});
+
+    for (std::size_t i = 0; i < 15; ++i)
+        dataset.push({{"A", "T"}, {"B", "F"}, {"C", "F"}, {"D", "F"}, {"E", "F"}});
+
+    for (std::size_t i = 0; i < 10; ++i)
+        dataset.push({{"A", "F"}, {"B", "T"}, {"C", "F"}, {"D", "T"}, {"E", "T"}});
+
+    for (std::size_t i = 0; i < 15; ++i)
+        dataset.push({{"A", "F"}, {"B", "F"}, {"C", "T"}, {"D", "T"}, {"E", "T"}});
+
+    for (std::size_t i = 0; i < 5; ++i)
+        dataset.push({{"A", "F"}, {"B", "F"}, {"C", "F"}, {"D", "F"}, {"E", "F"}});
+
+    for (std::size_t i = 0; i < 2; ++i)
+        dataset.push({{"A", "T"}, {"B", "T"}, {"C", "F"}, {"D", "T"}, {"E", "F"}});
+
+    {
+        pgm::Bic score(dataset);
+        assert(equal(score(bn), -162.27019));
+        assert(equal(score.score("A", {}), -48.1769));
+        assert(equal(score.score("B", {"A"}), -31.0806));
+        assert(equal(score.score("C", {"A"}), -50.5238));
+        assert(equal(score.score("D", {"B", "C"}), -8.40939));
+        assert(equal(score.score("E", {"C"}), -24.0795));
     }
 }
 
@@ -525,6 +614,8 @@ int main()
     test_bayesnet();
     test_sample_estimate();
     test_bdeu();
+    test_aic();
+    test_bic();
     test_simulated_annealing();
     test_greedy_hill_climbing();
     return 0;

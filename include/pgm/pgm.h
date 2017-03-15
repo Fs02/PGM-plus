@@ -9,6 +9,8 @@
 #include <pgm/sampleestimate.h>
 #include <pgm/score/bdeu.h>
 #include <pgm/score/loglikelihood.h>
+#include <pgm/score/aic.h>
+#include <pgm/score/bic.h>
 #include <pgm/score/fcll.h>
 #include <pgm/search/greedyhillclimbing.h>
 #include <pgm/search/simulatedannealing.h>
