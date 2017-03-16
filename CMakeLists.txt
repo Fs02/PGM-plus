@@ -80,6 +80,7 @@ enable_testing(true)  # Enables unit-testing.
 set(TEST
     ${PROJECT_SOURCE_DIR}/test/pgm_test.cpp
     ${PROJECT_SOURCE_DIR}/test/frequency_test.cpp
+    ${PROJECT_SOURCE_DIR}/test/dgraph_test.cpp
 )
 add_executable(pgm_test ${TEST})
 target_link_libraries(pgm_test ${PROJECT_NAME})
