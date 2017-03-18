@@ -78,9 +78,19 @@ include_directories(${CATCH_INCLUDE_DIR} ${COMMON_INCLUDES})
 enable_testing(true)  # Enables unit-testing.
 
 set(TEST
+    ${PROJECT_SOURCE_DIR}/test/test_utility.h
     ${PROJECT_SOURCE_DIR}/test/pgm_test.cpp
+    ${PROJECT_SOURCE_DIR}/test/variable_test.cpp
+    ${PROJECT_SOURCE_DIR}/test/dataset_test.cpp
     ${PROJECT_SOURCE_DIR}/test/frequency_test.cpp
     ${PROJECT_SOURCE_DIR}/test/dgraph_test.cpp
+    ${PROJECT_SOURCE_DIR}/test/bayesnet_test.cpp
+    ${PROJECT_SOURCE_DIR}/test/sampleestimate_test.cpp
+    ${PROJECT_SOURCE_DIR}/test/score/bdeu_test.cpp
+    ${PROJECT_SOURCE_DIR}/test/score/loglikelihood_test.cpp
+    ${PROJECT_SOURCE_DIR}/test/score/aic_test.cpp
+    ${PROJECT_SOURCE_DIR}/test/score/bic_test.cpp
+    ${PROJECT_SOURCE_DIR}/test/score/fcll_test.cpp
 )
 add_executable(pgm_test ${TEST})
 target_link_libraries(pgm_test ${PROJECT_NAME})
