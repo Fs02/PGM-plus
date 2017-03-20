@@ -111,11 +111,11 @@ public:
     std::string infer(const std::string &occurence, const variables_map_type &evidence) const;
 
     //! Get probability of some evidence occuring
-    double query(const variables_map_type &evidence) const;
     /*!
         \param evidence Evidence
         \return probability of the evidence
     */
+    double query(const variables_map_type &evidence) const;
 
     //! Add node
     /*!
@@ -158,7 +158,7 @@ public:
     /*!
         \param node Target mode
         \param state State of the target node
-        \param parent_states Parent states of target node
+        \param parents_states Parent states of target node
         \param p Probability
         \return True if success
     */    
@@ -169,7 +169,7 @@ public:
     /*!
         \param node Target mode
         \param state State of the target node
-        \param parent_states Parent states of target node
+        \param parents_states Parent states of target node
         \return Probability
     */
     double probability(const std::string &node, const std::string &state, 
