@@ -1,10 +1,11 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 project(pgm)
 include(ExternalProject)
 find_package(Git REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_CXX_STANDARD 11)
 
 set (HEADERS
     ${PROJECT_SOURCE_DIR}/include/pgm/pgm.h
