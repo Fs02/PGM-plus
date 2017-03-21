@@ -4,8 +4,8 @@
 
 using namespace pgm;
 
-Bdeu::Bdeu(const Dataset &dataset, double aplha)
-    : Score(dataset), alpha_(aplha)
+Bdeu::Bdeu(const Dataset &dataset, double alpha)
+    : Score(dataset), alpha_(alpha)
 {}
 
 double Bdeu::score(const std::string &child, const std::vector<std::string> &parents)

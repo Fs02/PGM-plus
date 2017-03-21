@@ -61,6 +61,12 @@ namespace pgm {
     }
 
     \endcode
+
+    For more information see:
+
+    Carvalho, A. M. Scoring functions for learning bayesian networks, 2009.
+
+    http://www.lx.it.pt/~asmc/pub/talks/09-TA/ta_pres.pdf
 */
 class Bic : public LogLikelihood
 {
