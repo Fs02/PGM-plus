@@ -1,5 +1,6 @@
 #include <pgm/search/simulatedannealing.h>
 #include <pgm/bayesnet.h>
+#include <cmath>
 #include <random>
 #include <iostream>
 
@@ -17,7 +18,7 @@ double SimulatedAnnealing::operator() (Bayesnet &bayesnet, const score_type &sco
 
     bayesnet.graph().clear_all_adjacents();
     init_naive_bayes(bayesnet);
-    double current_score = score(bayesnet);    
+    double current_score = score(bayesnet);
     double best_score = current_score;
     const double initial_score = current_score;
     Bayesnet best_bayesnet = bayesnet;
@@ -43,8 +44,7 @@ double SimulatedAnnealing::operator() (Bayesnet &bayesnet, const score_type &sco
                 is_operated = true;
                 const double new_score = score(bayesnet);
                 const double delta_score = new_score - current_score;
-
-                if ((temp * acceptance_dist(random) + 1e-100) < delta_score)
+                if ((temp * std::log(acceptance_dist(random) + 1e-100)) < delta_score)
                     current_score = new_score;
                 else
                     graph.add_adjacent(child, parent);
@@ -55,11 +55,11 @@ double SimulatedAnnealing::operator() (Bayesnet &bayesnet, const score_type &sco
                 is_operated = true;
                 const double new_score = score(bayesnet);
                 const double delta_score = new_score - current_score;
- 
-                if ((temp * acceptance_dist(random) + 1e-100) < delta_score)
+
+                if ((temp * std::log(acceptance_dist(random) + 1e-100)) < delta_score)
                     current_score = new_score;
                 else
-                    graph.rem_adjacent(child, parent);                
+                    graph.rem_adjacent(child, parent);
             }
         }
 
@@ -68,9 +68,9 @@ double SimulatedAnnealing::operator() (Bayesnet &bayesnet, const score_type &sco
             best_bayesnet = bayesnet;
             best_score = current_score;
 
-            if (verbose_)
-                std::cout << "Iter: " << iter << " Temp: " << temp << " Score: " << best_score << "\n";
         }
+        if (verbose_)
+            std::cout << "Iter: " << iter << " Temp: " << temp << " Best: " << best_score << " Current: " << current_score << "\n";
 
         temp *= delta_;
     }
